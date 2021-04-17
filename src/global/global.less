@@ -1,0 +1,48 @@
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.unselectable {
+  user-select: none;
+}
+
+::selection {
+  color: white;
+  background: #fe7300;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+}
+
+// 下面是对 antd 部分样式的修改覆盖, 可按需取用
+
+/*
+.ant-table-thead > tr > th {
+  background-color: #efecec;
+  border-bottom: 1px solid #b1b1b1;
+}
+
+.ant-breadcrumb a {
+  color: #1890ff;
+}
+
+.ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+  padding: 0;
+  text-align: center;
+}
+*/

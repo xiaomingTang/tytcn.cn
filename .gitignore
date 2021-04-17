@@ -1,0 +1,16 @@
+**/node_modules/
+**/.git/
+**/.DS_Store/
+**/debug.log
+**/yarn-error.log
+
+# package assets
+/dist/*.html
+/dist/*.ico
+/dist/*.js
+/dist/*.json
+/dist/manifest/**/*
+/dist/packages/
+
+# local config
+/config/.env.local.ts
