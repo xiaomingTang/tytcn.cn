@@ -2,7 +2,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import autoprefixer from "autoprefixer"
 
 import Paths from "./paths"
-import { isProduction } from "./Constants"
+import { isProduction } from "./constants"
 import webpack from "webpack"
 
 const styleLoader = isProduction ? MiniCssExtractPlugin.loader : "style-loader"
@@ -18,10 +18,10 @@ const cssModuleLoader = [
     loader: "css-loader",
     options: {
       modules: {
-        localIdentName: "[local]_[hash:base64:5]",
+        localIdentName: isProduction ? "[hash:base64:6]" : "[local]_[hash:base64:5]",
+        exportLocalsConvention: "camelCase",
       },
       importLoaders: 2,
-      localsConvention: "camelCase",
       sourceMap: !isProduction,
     }
   },
