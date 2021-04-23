@@ -8,6 +8,8 @@ import SwitchLang from "@Src/components/SwitchLang"
 import SwitchTransitionType from "@Src/components/SwitchTransitionType"
 import { Footer } from "@Src/components/Footer"
 
+import Styles from "./index.module.less"
+
 function Home() {
   const { t } = useTranslation()
   const [backgroundColor, color] = useRandomSoftColors()

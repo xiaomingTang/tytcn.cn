@@ -4,7 +4,7 @@ import React, {
 } from "react"
 import * as THREE from "three"
 import {
-  Canvas, CanvasProps,
+  Canvas, ContainerProps,
 } from "react-three-fiber"
 import FPSStats from "react-fps-stats"
 import { ProgressProvider, RawProgressContext } from "ease-progress"
@@ -20,7 +20,7 @@ import { useOrientation } from "@Src/utils/useOrientation"
 
 const MODEL_SIZE = 150
 
-const canvasConfig: Omit<CanvasProps, "children"> = {
+const canvasConfig: Omit<ContainerProps, "children"> = {
   shadowMap: false,
   gl: {
     antialias: true,
@@ -39,6 +39,23 @@ const canvasConfig: Omit<CanvasProps, "children"> = {
     scene.background = new THREE.Color(0xcccccc)
     scene.fog = new THREE.Fog(0xcccccc, MODEL_SIZE * 2, MODEL_SIZE * 4)
   },
+}
+
+function Delay<T>({ ms, children }: { ms: number; children: T }): T | null {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const flag = window.setTimeout(() => {
+      setVisible(true)
+    }, ms)
+
+    return () => {
+      window.clearTimeout(flag)
+      setVisible(false)
+    }
+  }, [ms])
+
+  return visible ? children : null
 }
 
 function Envs() {
@@ -152,13 +169,16 @@ function RawDevice() {
   const { loaded, total } = progressContext
 
   return <>
-    <Canvas
-      {...canvasConfig}
-    >
-      <RawProgressContext.Provider value={progressContext}>
-        <Scene />
-      </RawProgressContext.Provider>
-    </Canvas>
+    {/* 此处延迟, 是因为 Canvas 组件会中断 css 动画(如果页面切换有动画) */}
+    <Delay ms={500}>
+      <Canvas
+        {...canvasConfig}
+      >
+        <RawProgressContext.Provider value={progressContext}>
+          <Scene />
+        </RawProgressContext.Provider>
+      </Canvas>
+    </Delay>
     <FPSStats />
     {loaded < total && <Loading
       text={`${(loaded / 1024 / 1024).toFixed(1)}MB / ${(total / 1024 / 1024).toFixed(1)}MB`}
