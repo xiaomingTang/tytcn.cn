@@ -64,7 +64,7 @@ const prodWebpackConfig = merge(commonWebpackConfig, {
       // 如果使用 webpack5, 要注意这个问题
       filename: "manifest.[hash:5].json",
       name: "xiaomings_home",
-      short_name: "xiaomings_home",
+      short_name: "xiaoming",
       description: "王小明的闲聊站点",
       display: "standalone",
       start_url: ".",
@@ -101,7 +101,7 @@ const prodWebpackConfig = merge(commonWebpackConfig, {
        */
       runtimeCaching: [
         {
-          urlPattern: "translation.json",
+          urlPattern: /translation\.json$/,
           handler: "StaleWhileRevalidate",
         },
       ],
