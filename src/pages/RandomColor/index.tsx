@@ -18,7 +18,7 @@ function RandomElem() {
 
 function RandomColor() {
   return <>
-    <h2 className={Styles.title}>文字皆为背景色值</h2>
+    <h2 className={Styles.title}>随机背景色及相应适宜文本颜色</h2>
     <div className={Styles.wrapper}>
       {
         new Array(1000).fill(0).map((_, i) => <RandomElem key={i} />)
