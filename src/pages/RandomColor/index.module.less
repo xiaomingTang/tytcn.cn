@@ -1,0 +1,49 @@
+@import "~@Src/global/global.vars.less";
+
+.title {
+  margin: 14px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.wrapper {
+  display: grid;
+  row-gap: 1em;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 14px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .wrapper {
+    grid-template-columns: 100%;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 900px) {
+  .wrapper {
+    column-gap: 2%; // 2% / 1 (列数 - 1)
+    grid-template-columns: 49% 49%;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1200px) {
+  .wrapper {
+    column-gap: 2%; // 4% / 2 (列数 - 1)
+    grid-template-columns: 32% 32% 32%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .wrapper {
+    column-gap: 1.33%; // 4% / 3 (列数 - 1)
+    grid-template-columns: 24% 24% 24% 24%;
+  }
+}
+
+.color-item {
+  height: 6em;
+  padding-top: 1em;
+  line-height: 2em;
+  overflow: hidden;
+}

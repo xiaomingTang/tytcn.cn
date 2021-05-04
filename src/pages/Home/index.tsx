@@ -22,6 +22,7 @@ function Home() {
       backgroundColor,
     }}>this is <strong>Home page</strong></p>
     <p>go to <Link to="/device">My Device</Link></p>
+    <p>go to <Link to="/random-color">random color page</Link></p>
     <p>go to <Link to="/not-exist-path">not-exist-path</Link></p>
     <p>variable from process.env: process.env.APP_NAME is: {process.env.APP_NAME}</p>
 

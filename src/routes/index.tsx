@@ -15,6 +15,7 @@ import { transitionClassNameMap } from "@Src/components/Transitions"
 import NotFound from "./NotFound"
 import Home from "./Home"
 import Device from "./Device"
+import RandomColor from "./RandomColor"
 
 function Contents() {
   const location = useLocation()
@@ -31,6 +32,11 @@ function Contents() {
         <Route exact sensitive path="/device">
           <PageContainer>
             <Device />
+          </PageContainer>
+        </Route>
+        <Route exact sensitive path="/random-color">
+          <PageContainer>
+            <RandomColor />
           </PageContainer>
         </Route>
         <Route exact sensitive path="/">
