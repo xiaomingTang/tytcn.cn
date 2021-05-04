@@ -61,19 +61,19 @@ export function randomSoftColors(): [string, string] {
   /**
    * "亮度平衡"(没文化的我自创的词)
    *
-   * 我发现当亮度越接近 50% 时, "纯净度"的"话语权"就越大
+   * 我发现当亮度越接近 53% 时, "纯净度"的"话语权"就越大
    *
-   * 亮度偏离 50% (lightBalance 大), 颜色"深浅"由 亮度 控制(亮度越大, 颜色越浅)
+   * 亮度偏离 53% (lightBalance 大), 颜色"深浅"由 亮度 控制(亮度越大, 颜色越浅)
    *
-   * 亮度接近 50% (lightBalance 小), 颜色"深浅"由 "纯净度" 控制(纯净度越小, 颜色越浅)
+   * 亮度接近 53% (lightBalance 小), 颜色"深浅"由 "纯净度" 控制(纯净度越小, 颜色越浅)
    */
-  const lightBalance = Math.abs((l - 50) / 50)
+  const lightBalance = Math.abs((l - 53) / 53)
   let inversedL = 10
   // 以下均为经验值
   if (lightBalance > 0.1) {
-    inversedL = l > 50 ? 10 : 90
+    inversedL = l > 53 ? 10 : 90
   } else {
-    inversedL = purity < 0.25 ? 10 : 90
+    inversedL = purity < 0.5 ? 10 : 90
   }
   return [`hsl(${h}deg,${s}%,${l}%)`, `hsl(${inversedH}deg,${inversedS}%,${inversedL}%)`]
 }
