@@ -4,6 +4,12 @@
  * https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#clientsclaim
  *
  * https://jakearchibald.com/2016/caching-best-practices/
+ *
+ * 本地测试时, 需要以 **http** 协议运行 **localhost:PORT** 页面才能测试 service worker
+ *
+ * 运行在 https 或者 127.0.0.1 或者 192.168.*.* 时, 浏览器都会忽略 service worker 或者报错
+ *
+ * 线上环境则必须 https, 浏览器才会注册 service worker
  */
 
 import path from "path"
@@ -22,6 +28,9 @@ import { optimization } from "./webpack-optimization"
 
 import Paths from "./paths"
 import { baseDllEntryName, DLL_VAR_PREFIX } from "./webpack.dll.config"
+import { getEnvConfig } from "./utils"
+
+const { pwaDisplayMode } = getEnvConfig()
 
 const prodWebpackConfig = merge(commonWebpackConfig, {
   plugins: [
@@ -66,29 +75,24 @@ const prodWebpackConfig = merge(commonWebpackConfig, {
       name: "xiaomings_home",
       short_name: "xiaoming",
       description: "王小明的闲聊站点",
-      display: "standalone",
+      display: pwaDisplayMode,
       start_url: ".",
+      theme_color: "#e7eaed",
       background_color: "#ffffff",
       crossorigin: "use-credentials",
       ios: true,
       icons: [
         {
-          src: path.resolve(Paths.Public, "manifest/icons/64-64.png"),
-          size: "64x64",
-          destination: "manifest/icons",
-        },
-        {
-          src: path.resolve(Paths.Public, "manifest/icons/128-128.png"),
-          size: "128x128",
-          destination: "manifest/icons",
-          ios: "startup",
-        },
-        {
-          src: path.resolve(Paths.Public, "manifest/icons/256-256.png"),
-          size: "256x256",
-          destination: "manifest/icons",
+          src: path.resolve(Paths.Public, "icon.png"),
+          sizes: [120, 152, 167, 180, 1024],
+          destination: "manifest/icons/ios",
           ios: true,
-        }
+        },
+        {
+          src: path.resolve(Paths.Public, "icon.png"),
+          sizes: [36, 48, 72, 96, 144, 192, 512],
+          destination: "manifest/icons/android",
+        },
       ],
     }),
     new GenerateSW({
