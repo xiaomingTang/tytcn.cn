@@ -49,6 +49,10 @@ const commonWebpackConfig: webpack.Configuration = {
       chunks: ["index"],
       favicon: path.join(Paths.Public, "favicon.ico"),
       // hash: true, // 不 hash
+      meta: {
+        keywords: "wangxiaoming, xiaoming, blog, 王小明, 博客, 个人博客, 王小明的闲聊站点",
+        description: "王小明的闲聊站点, 个人博客",
+      },
     }) as unknown as webpack.Plugin,
     new webpack.WatchIgnorePlugin([
       /\.d\.ts$/, Paths.Dist, Paths.NodeModule,
