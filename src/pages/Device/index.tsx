@@ -8,6 +8,7 @@ import {
 } from "react-three-fiber"
 import FPSStats from "react-fps-stats"
 import { ProgressProvider, RawProgressContext } from "ease-progress"
+import { useDeviceOrientation } from "xiaoming-hooks"
 
 import { useOrbitControl } from "@Src/utils/useOrbitControl"
 import { CatchableSuspense } from "@Src/components/CatchableSuspense"
@@ -16,7 +17,6 @@ import { SimulateClick } from "@Src/components/SimulateEvents"
 import { GLTFAssets } from "@Src/components/loaders/GLTFAssets"
 import { moveObjectTo, scaleObjectTo } from "@Src/utils/threeUtils"
 import { Loading } from "@Src/components/Fallback"
-import { useOrientation } from "@Src/utils/useOrientation"
 
 const MODEL_SIZE = 150
 
@@ -91,7 +91,7 @@ function Scene() {
   }), [])
 
   const [model, setModel] = useState<THREE.Group>()
-  const orientation = useOrientation()
+  const orientation = useDeviceOrientation()
 
   useEffect(() => {
     if (model) {

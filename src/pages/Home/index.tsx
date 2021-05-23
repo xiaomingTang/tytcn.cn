@@ -5,8 +5,8 @@ import {
 } from "antd"
 import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
+import { useRandomSoftColors } from "xiaoming-hooks"
 
-import { useRandomSoftColors } from "@Src/utils"
 import SwitchLang from "@Src/components/SwitchLang"
 import SwitchTransitionType from "@Src/components/SwitchTransitionType"
 import { Footer } from "@Src/components/Footer"

@@ -10971,6 +10971,15 @@ xhr@^2.0.1:
     parse-headers "^2.0.0"
     xtend "^4.0.0"
 
+xiaoming-hooks@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.npmjs.org/xiaoming-hooks/-/xiaoming-hooks-0.0.3.tgz#669b998e422dfce561f323adc1a6379477c62388"
+  integrity sha512-rSz+w4v8jUl066OfB7D98urqjXPBQvHguvUqN4nqQRt72UV0FX2MFvCWvmGR0Ipne8z24IYNkcdtCzzGuEIVJQ==
+  dependencies:
+    "@babel/core" "^7.12.3"
+    "@babel/runtime-corejs3" "^7.12.1"
+    core-js "3"
+
 xml-parse-from-string@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/xml-parse-from-string/download/xml-parse-from-string-1.0.1.tgz#a9029e929d3dbcded169f3c6e28238d95a5d5a28"

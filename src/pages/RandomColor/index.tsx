@@ -1,11 +1,11 @@
 import React from "react"
 
-import { randomSoftColors } from "@Src/utils"
+import { useRandomSoftColors } from "xiaoming-hooks"
 
 import Styles from "./index.module.less"
 
 function RandomElem() {
-  const [backgroundColor, color] = randomSoftColors()
+  const [backgroundColor, color] = useRandomSoftColors()
 
   return <div className={Styles.colorItem} style={{
     backgroundColor,
