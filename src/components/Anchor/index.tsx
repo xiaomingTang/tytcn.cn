@@ -1,4 +1,4 @@
-import { joinSpace } from "@Src/utils"
+import { joinSpace } from "@Src/utils/others"
 import React, {
   AnchorHTMLAttributes, ReactNode, useMemo,
 } from "react"

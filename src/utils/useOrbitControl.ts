@@ -5,7 +5,7 @@ import { useFrame, useThree } from "react-three-fiber"
 import { Vector3 } from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import TWEEN from "@tweenjs/tween.js"
-import { voidFunc } from "."
+import { voidFunc } from "./others"
 
 const globalOrbitControlMap: {
   [key in string]?: OrbitControls;

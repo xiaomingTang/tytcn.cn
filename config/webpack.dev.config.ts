@@ -7,6 +7,7 @@ import { isMeansTrue } from "./utils"
 
 const devWebpackConfig = merge(commonWebpackConfig, {
   devServer: {
+    historyApiFallback: true,
     contentBase: Paths.Dist,
     https: isMeansTrue(process.env.https),
     host: "0.0.0.0",

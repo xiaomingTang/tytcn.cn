@@ -3,7 +3,7 @@ import { Spin } from "antd"
 import { LoadingOutlined } from "@ant-design/icons"
 import { SpinProps } from "antd/lib/spin"
 
-import { joinSpace } from "@Src/utils"
+import { joinSpace } from "@Src/utils/others"
 
 import Styles from "./index.module.less"
 

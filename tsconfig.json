@@ -12,6 +12,7 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "strict": true,
+    "strictNullChecks": true,
     "paths": {
       "@Src/*": ["src/*"]
     }

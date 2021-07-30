@@ -1,9 +1,9 @@
 import React from "react"
 import ReactDOM from "react-dom"
 
-import AppRouter from "./routes"
+import AppRoute from "./routes"
 
 ReactDOM.render(
-  <AppRouter />,
+  <AppRoute />,
   document.querySelector("#app"),
 )

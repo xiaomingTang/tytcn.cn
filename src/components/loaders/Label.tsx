@@ -2,7 +2,7 @@ import React, { useMemo } from "react"
 import { Html } from "@react-three/drei"
 import * as THREE from "three"
 
-import { joinSpace } from "@Src/utils"
+import { joinSpace } from "@Src/utils/others"
 
 import Styles from "./Label.module.less"
 

@@ -1,4 +1,4 @@
-import { joinSpace } from "@Src/utils"
+import { joinSpace } from "@Src/utils/others"
 import React, { HTMLAttributes } from "react"
 import { Anchor } from "@Src/components/Anchor"
 import Styles from "./index.module.less"

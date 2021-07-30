@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from "react"
-import { joinSpace } from "@Src/utils"
+import { joinSpace } from "@Src/utils/others"
 import Styles from "./index.module.less"
 
 export function PageContainer({
