@@ -72,7 +72,7 @@ export function Pwa() {
         duration: null,
         placement: "bottomRight",
         message: "发现新版本",
-        description: "新版本已加载完成",
+        description: `新版本 ${process.env.APP_VERSION} 已加载完成`,
         key,
         onClose,
         btn: <>
