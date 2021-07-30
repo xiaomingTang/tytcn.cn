@@ -1,7 +1,7 @@
 {
   "name": "xiaomings_home",
   "description": "王小明的闲聊站点",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "./src/index.tsx",
   "browserslist": {
     "production": [
