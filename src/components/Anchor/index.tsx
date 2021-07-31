@@ -1,11 +1,11 @@
-import { joinSpace } from "@Src/utils/others"
+import { joinSpace } from '@Src/utils/others'
 import React, {
   AnchorHTMLAttributes, ReactNode, useMemo,
-} from "react"
+} from 'react'
 
-import Iconfont from "@Src/components/Iconfont"
+import Iconfont from '@Src/components/Iconfont'
 
-import Styles from "./index.module.less"
+import Styles from './index.module.less'
 
 interface AnchorProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   icon?: ReactNode;
@@ -21,7 +21,7 @@ export function Anchor({
   ...props
 }: AnchorProps) {
   const isOuterSite = useMemo(() => {
-    const url = new URL(href || "", window.location.href)
+    const url = new URL(href || '', window.location.href)
     return url.hostname !== window.location.hostname
   }, [href])
 
@@ -29,21 +29,21 @@ export function Anchor({
     if (icon !== undefined) {
       return icon
     }
-    return <sup><Iconfont type={isOuterSite ? "link-outer" : "link-inner"} /></sup>
+    return <sup><Iconfont type={isOuterSite ? 'link-outer' : 'link-inner'} /></sup>
   }, [icon, isOuterSite])
 
   const finalTarget = useMemo(() => {
     if (target !== undefined) {
       return target
     }
-    return isOuterSite ? "_blank" : "_self"
+    return isOuterSite ? '_blank' : '_self'
   }, [isOuterSite, target])
 
   const finalRel = useMemo(() => {
     if (rel !== undefined) {
       return rel
     }
-    return isOuterSite ? "noopener noreferrer" : ""
+    return isOuterSite ? 'noopener noreferrer' : ''
   }, [isOuterSite, rel])
 
   return <a

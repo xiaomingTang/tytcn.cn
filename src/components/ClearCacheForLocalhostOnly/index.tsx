@@ -1,10 +1,10 @@
-import { Button, message, Popover } from "antd"
-import React, { useMemo } from "react"
+import { Button, message, Popover } from 'antd'
+import React, { useMemo } from 'react'
 
-import { Anchor } from "@Src/components/Anchor"
+import { Anchor } from '@Src/components/Anchor'
 
 export function ClearCacheForLocalhostOnly() {
-  const isLocalhost = useMemo(() => window.location.hostname === "localhost", [])
+  const isLocalhost = useMemo(() => window.location.hostname === 'localhost', [])
 
   if (!isLocalhost) {
     return <></>
@@ -12,16 +12,16 @@ export function ClearCacheForLocalhostOnly() {
 
   return <>
     <Button
-      size="small"
+      size='small'
       onClick={() => {
         caches.keys().then((cacheNames) => {
           Promise.all(cacheNames.map((name) => caches.delete(name)))
             .then(() => {
-              message.success("清理缓存成功")
+              message.success('清理缓存成功')
             })
             .catch((err) => {
               console.error(err)
-              message.error("清理缓存失败, 请打开调试以查看失败原因")
+              message.error('清理缓存失败, 请打开调试以查看失败原因')
             })
         })
       }}
@@ -29,19 +29,19 @@ export function ClearCacheForLocalhostOnly() {
       清理该页面缓存
     </Button>
     <Popover
-      title="为什么要清理缓存?"
-      trigger={["click"]}
-      placement="topLeft"
+      title='为什么要清理缓存?'
+      trigger={['click']}
+      placement='topLeft'
       content={<>
         <p>
           正常的 pwa 页面是不需要 主动 / 手动 清理缓存的,
           <br />
           详见
-          <Anchor href="https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#updates">
+          <Anchor href='https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#updates'>
             service worker 更新策略
           </Anchor>
           以及
-          <Anchor href="https://jakearchibald.com/2016/caching-best-practices/">
+          <Anchor href='https://jakearchibald.com/2016/caching-best-practices/'>
             caching best practices
           </Anchor>
         </p>
@@ -58,7 +58,7 @@ export function ClearCacheForLocalhostOnly() {
         </p>
       </>}
     >
-      <Button size="small"> ? </Button>
+      <Button size='small'> ? </Button>
     </Popover>
   </>
 }

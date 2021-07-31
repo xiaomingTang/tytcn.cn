@@ -12,23 +12,23 @@
  * 线上环境则必须 https, 浏览器才会注册 service worker
  */
 
-import path from "path"
-import webpack from "webpack"
-import { merge } from "webpack-merge"
+import path from 'path'
+import webpack from 'webpack'
+import { merge } from 'webpack-merge'
 
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin"
-import MiniCssExtractPlugin from "mini-css-extract-plugin"
-import AddAssetHtmlPlugin from "add-asset-html-webpack-plugin"
-import { CleanWebpackPlugin } from "clean-webpack-plugin"
-import WebpackPwaManifest from "webpack-pwa-manifest"
-import { GenerateSW } from "workbox-webpack-plugin"
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import AddAssetHtmlPlugin from 'add-asset-html-webpack-plugin'
+import { CleanWebpackPlugin } from 'clean-webpack-plugin'
+import WebpackPwaManifest from 'webpack-pwa-manifest'
+import { GenerateSW } from 'workbox-webpack-plugin'
 
-import commonWebpackConfig from "./webpack.common.config"
-import { optimization } from "./webpack-optimization"
+import commonWebpackConfig from './webpack.common.config'
+import { optimization } from './webpack-optimization'
 
-import Paths from "./paths"
-import { baseDllEntryName, DLL_VAR_PREFIX } from "./webpack.dll.config"
-import { getEnvConfig } from "./utils"
+import Paths from './paths'
+import { baseDllEntryName, DLL_VAR_PREFIX } from './webpack.dll.config'
+import { getEnvConfig } from './utils'
 
 const { pwaDisplayMode } = getEnvConfig()
 
@@ -40,15 +40,15 @@ const prodWebpackConfig = merge(commonWebpackConfig, {
       verbose: true,
       // dry: true,
       cleanOnceBeforeBuildPatterns: [
-        "*.html",
-        "service-worker.js", "service-worker.*.js", "workbox.js", "workbox-*.js",
-        "manifest/*", "manifest.json", "manifest.*.json",
-        "packages/scripts/*", "packages/styles/*",
+        '*.html',
+        'service-worker.js', 'service-worker.*.js', 'workbox.js', 'workbox-*.js',
+        'manifest/*', 'manifest.json', 'manifest.*.json',
+        'packages/scripts/*', 'packages/styles/*',
       ],
     }) as unknown as webpack.Plugin,
     // 该版本类型暂未适配 webpack@5
     new MiniCssExtractPlugin({
-      filename: "packages/styles/[name].[hash:5].css",
+      filename: 'packages/styles/[name].[hash:5].css',
     }) as unknown as webpack.Plugin,
     new webpack.DllReferencePlugin({
       context: __dirname,
@@ -56,9 +56,9 @@ const prodWebpackConfig = merge(commonWebpackConfig, {
       manifest: require(path.join(Paths.Dll, `manifest/${baseDllEntryName}.manifest.json`)),
     }),
     new AddAssetHtmlPlugin({
-      filepath: path.join(Paths.Dll, "scripts/*.js"),
-      outputPath: "packages/dll/scripts",
-      publicPath: "packages/dll/scripts",
+      filepath: path.join(Paths.Dll, 'scripts/*.js'),
+      outputPath: 'packages/dll/scripts',
+      publicPath: 'packages/dll/scripts',
     }),
     new ForkTsCheckerWebpackPlugin({
       typescript: true,
@@ -69,29 +69,29 @@ const prodWebpackConfig = merge(commonWebpackConfig, {
     }),
     new WebpackPwaManifest({
       // 该组件会使用 webpack output.publicPath 属性
-      // 而 webpack5 output.publicPath 默认值为 "auto"(而非 "/" 或 "./")
+      // 而 webpack5 output.publicPath 默认值为 'auto'(而非 '/' 或 './')
       // 如果使用 webpack5, 要注意这个问题
-      filename: "manifest.[hash:5].json",
-      name: "xiaomings_home",
-      short_name: "xiaoming",
-      description: "王小明的闲聊站点",
+      filename: 'manifest.[hash:5].json',
+      name: 'xiaomings_home',
+      short_name: 'xiaoming',
+      description: '王小明的闲聊站点',
       display: pwaDisplayMode,
-      start_url: ".",
-      theme_color: "#e7eaed",
-      background_color: "#ffffff",
-      crossorigin: "use-credentials",
+      start_url: '.',
+      theme_color: '#e7eaed',
+      background_color: '#ffffff',
+      crossorigin: 'use-credentials',
       ios: true,
       icons: [
         {
-          src: path.resolve(Paths.Public, "icon.png"),
+          src: path.resolve(Paths.Public, 'icon.png'),
           sizes: [120, 152, 167, 180, 1024],
-          destination: "manifest/icons/ios",
+          destination: 'manifest/icons/ios',
           ios: true,
         },
         {
-          src: path.resolve(Paths.Public, "icon.png"),
+          src: path.resolve(Paths.Public, 'icon.png'),
           sizes: [36, 48, 72, 96, 144, 192, 512],
-          destination: "manifest/icons/android",
+          destination: 'manifest/icons/android',
         },
       ],
     }),
@@ -106,7 +106,7 @@ const prodWebpackConfig = merge(commonWebpackConfig, {
       runtimeCaching: [
         {
           urlPattern: /translation\.json$/,
-          handler: "StaleWhileRevalidate",
+          handler: 'StaleWhileRevalidate',
         },
       ],
     }),

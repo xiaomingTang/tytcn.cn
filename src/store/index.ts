@@ -1,14 +1,14 @@
 import {
   createStore, combineReducers, applyMiddleware,
-} from "redux"
-import thunk, { ThunkAction, ThunkDispatch } from "redux-thunk"
-// import logger from "redux-logger"
+} from 'redux'
+import thunk, { ThunkAction, ThunkDispatch } from 'redux-thunk'
+// import logger from 'redux-logger'
 
 import {
   initState as globalSettingsInitState,
   reducer as globalSettingsReducer,
   Action as GlobalSettingsAction,
-} from "./globalSettings"
+} from './globalSettings'
 
 const initState = {
   globalSettings: globalSettingsInitState,

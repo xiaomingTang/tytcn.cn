@@ -1,5 +1,5 @@
-import "@Src/i18n"
+import '@Src/i18n'
 
-import "./polyfills"
+import './polyfills'
 
-import "./index.less"
+import './index.less'

@@ -1,7 +1,7 @@
-import React, { HTMLAttributes } from "react"
-import { joinSpace } from "@Src/utils/others"
+import React, { HTMLAttributes } from 'react'
+import { joinSpace } from '@Src/utils/others'
 
-import "./iconfont/iconfont.css"
+import './iconfont/iconfont.css'
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
   type: string;
@@ -16,7 +16,7 @@ export default function Iconfont({
       className,
     )}
     style={{
-      fontSize: "inherit",
+      fontSize: 'inherit',
       ...style,
     }}
     {...props}

@@ -1,28 +1,28 @@
-import { HotModuleReplacementPlugin } from "webpack"
-import { merge } from "webpack-merge"
+import { HotModuleReplacementPlugin } from 'webpack'
+import { merge } from 'webpack-merge'
 
-import commonWebpackConfig from "./webpack.common.config"
-import Paths from "./paths"
-import { isMeansTrue } from "./utils"
+import commonWebpackConfig from './webpack.common.config'
+import Paths from './paths'
+import { isMeansTrue } from './utils'
 
 const devWebpackConfig = merge(commonWebpackConfig, {
   devServer: {
     historyApiFallback: true,
     contentBase: Paths.Dist,
     https: isMeansTrue(process.env.https),
-    host: "0.0.0.0",
+    host: '0.0.0.0',
     port: 8080,
     useLocalIp: true,
     hot: true,
     open: isMeansTrue(process.env.open),
-    openPage: "./index.html",
+    openPage: './index.html',
     // 开发时代理, 可解决开发时跨域问题
     proxy: [
       {
         context: [
-          "/your-custom-api",
+          '/your-custom-api',
         ],
-        target: "https://your-website.com",
+        target: 'https://your-website.com',
         secure: false,
         changeOrigin: true,
       }

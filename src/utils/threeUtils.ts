@@ -1,4 +1,4 @@
-import * as THREE from "three"
+import * as THREE from 'three'
 
 export function isMesh(obj: THREE.Object3D): obj is THREE.Mesh {
   return (obj as THREE.Mesh).isMesh
@@ -26,14 +26,14 @@ export function scaleObjectTo(object3d: THREE.Object3D, size: number): void {
   object3d.scale.multiplyScalar(scalar)
 }
 
-export function moveObjectTo(object3d: THREE.Object3D, target: THREE.Vector3, base: "TOP" | "BOTTOM" | "CENTER" = "BOTTOM"): void {
+export function moveObjectTo(object3d: THREE.Object3D, target: THREE.Vector3, base: 'TOP' | 'BOTTOM' | 'CENTER' = 'BOTTOM'): void {
   const box = new THREE.Box3().setFromObject(object3d)
   const halfDeltaY = (box.max.y - box.min.y) / 2
   const center = box.getCenter(new THREE.Vector3())
 
-  if (base === "BOTTOM") {
+  if (base === 'BOTTOM') {
     center.y -= halfDeltaY
-  } else if (base === "TOP") {
+  } else if (base === 'TOP') {
     center.y += halfDeltaY
   }
 

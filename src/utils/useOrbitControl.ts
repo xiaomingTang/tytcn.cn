@@ -1,17 +1,17 @@
 import {
   useEffect, useState,
-} from "react"
-import { useFrame, useThree } from "react-three-fiber"
-import { Vector3 } from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import TWEEN from "@tweenjs/tween.js"
-import { voidFunc } from "./others"
+} from 'react'
+import { useFrame, useThree } from 'react-three-fiber'
+import { Vector3 } from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import TWEEN from '@tweenjs/tween.js'
+import { voidFunc } from './others'
 
 const globalOrbitControlMap: {
   [key in string]?: OrbitControls;
 } = {}
 
-export function useOrbitControl(name = "_useOrbitControl_defaultName_") {
+export function useOrbitControl(name = '_useOrbitControl_defaultName_') {
   const [targetMap, setTargetMap] = useState({
     tween: false,
     target: new Vector3(),

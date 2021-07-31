@@ -1,6 +1,6 @@
-import pkg from "../package.json"
+import pkg from '../package.json'
 
-export const isProduction = process.env.NODE_ENV !== "development"
+export const isProduction = process.env.NODE_ENV !== 'development'
 
 export const appName = pkg.name
 

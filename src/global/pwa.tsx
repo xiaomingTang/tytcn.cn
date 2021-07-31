@@ -1,17 +1,17 @@
 import React, {
   Dispatch, useEffect, useState,
-} from "react"
+} from 'react'
 import {
   Button, notification,
-} from "antd"
-import { useDispatch } from "react-redux"
+} from 'antd'
+import { useDispatch } from 'react-redux'
 
-import { Action } from "@Src/store/globalSettings"
+import { Action } from '@Src/store/globalSettings'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{
-    outcome: "installed" | "dismissed";
-    platform: "web" | "android" | "";
+    outcome: 'installed' | 'dismissed';
+    platform: 'web' | 'android' | '';
   }>;
   prompt(): Promise<void>;
 }
@@ -25,13 +25,13 @@ export function Pwa() {
   // 注册 service worker 并记录是否加载新版本
   useEffect(() => {
     if (navigator.serviceWorker) {
-      navigator.serviceWorker.register("./service-worker.js").then((registration) => {
-        console.log("service worker registed")
-        registration.addEventListener("updatefound", () => {
+      navigator.serviceWorker.register('./service-worker.js').then((registration) => {
+        console.log('service worker registed')
+        registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing
           if (newWorker) {
-            newWorker.addEventListener("statechange", () => {
-              if (newWorker.state === "installed") {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed') {
                 if (navigator.serviceWorker.controller) {
                   setIsNewVersionInstalled(true)
                 }
@@ -40,10 +40,10 @@ export function Pwa() {
           }
         })
       }).catch((registrationError) => {
-        console.error("SW registration failed: ", registrationError)
+        console.error('SW registration failed: ', registrationError)
       })
     } else {
-      console.error("serviceWorker not supported")
+      console.error('serviceWorker not supported')
     }
   }, [])
 
@@ -53,10 +53,10 @@ export function Pwa() {
       setDeferredPrompt(e as BeforeInstallPromptEvent)
     }
 
-    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt)
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt)
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt)
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt)
     }
   }, [])
 
@@ -70,15 +70,15 @@ export function Pwa() {
 
       notification.info({
         duration: null,
-        placement: "bottomRight",
-        message: "发现新版本",
+        placement: 'bottomRight',
+        message: '发现新版本',
         description: `新版本 ${process.env.APP_VERSION} 已加载完成`,
         key,
         onClose,
         btn: <>
           <Button
-            type="primary"
-            size="small"
+            type='primary'
+            size='small'
             onClick={() => {
               // 需要关闭 notification, 因为 window.location.reload 可能被阻止
               notification.close(key)
@@ -94,22 +94,22 @@ export function Pwa() {
 
   // pwa app installed
   useEffect(() => {
-    setIsInstalled(window.matchMedia(`(display-mode: ${process.env.pwaDisplayMode || "standalone"})`).matches)
+    setIsInstalled(window.matchMedia(`(display-mode: ${process.env.pwaDisplayMode || 'standalone'})`).matches)
 
     const onAppInstalled = () => {
       setIsInstalled(true)
     }
 
-    window.addEventListener("appinstalled", onAppInstalled)
+    window.addEventListener('appinstalled', onAppInstalled)
 
     return () => {
-      window.removeEventListener("appinstalled", onAppInstalled)
+      window.removeEventListener('appinstalled', onAppInstalled)
     }
   }, [])
 
   useEffect(() => {
     dispatch({
-      type: "@globalSettings/deferredPrompt",
+      type: '@globalSettings/deferredPrompt',
       value: !isInstalled && deferredPrompt ? deferredPrompt : undefined,
     })
   }, [deferredPrompt, dispatch, isInstalled])

@@ -6,10 +6,10 @@ const langList: {
   name: string;
   label: string;
 }[] = [
-  { name: "simpleChinese", label: "简体中文" },
-  { name: "traditionalChinese", label: "繁體中文" },
-  { name: "english", label: "English" },
-  { name: "martian", label: "oぃ吙煋伩ヤ" },
+  { name: 'simpleChinese', label: '简体中文' },
+  { name: 'traditionalChinese', label: '繁體中文' },
+  { name: 'english', label: 'English' },
+  { name: 'martian', label: 'oぃ吙煋伩ヤ' },
 ]
 
 type LangTitleMap = Record<string, string>
@@ -26,7 +26,7 @@ const langTitleMap: LangTitleMap = (() => {
 })()
 
 export function getLangTitle(lang: string) {
-  return langTitleMap[lang] || "unknown lang"
+  return langTitleMap[lang] || 'unknown lang'
 }
 
 export const availableLangs: string[] = langList.map(({ name }) => name)

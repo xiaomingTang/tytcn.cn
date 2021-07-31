@@ -1,23 +1,22 @@
-import { hot } from "react-hot-loader/root"
-import React, { Suspense } from "react"
-import { Provider, useSelector } from "react-redux"
+import { hot } from 'react-hot-loader/root'
+import React, { Suspense } from 'react'
+import { Provider, useSelector } from 'react-redux'
 import {
   HashRouter as Router, Switch, useLocation, Route,
-} from "react-router-dom"
-import { TransitionGroup, CSSTransition } from "react-transition-group"
+} from 'react-router-dom'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
-import "@Src/global"
-import { Pwa } from "@Src/global/pwa"
-import store, { State } from "@Src/store/index"
+import '@Src/global'
+import { Pwa } from '@Src/global/pwa'
+import store, { State } from '@Src/store/index'
 
-import { Loading } from "@Src/components/Fallback"
-import { PageContainer } from "@Src/components/PageContainer"
-import { transitionClassNameMap } from "@Src/components/Transitions"
+import { Loading } from '@Src/components/Fallback'
+import { PageContainer } from '@Src/components/PageContainer'
+import { transitionClassNameMap } from '@Src/components/Transitions'
 
-const Home = React.lazy(() => import(/* webpackChunkName: "Home" */"@Src/pages/Home"))
-const NotFound = React.lazy(() => import(/* webpackChunkName: "NotFound" */"@Src/pages/NotFound"))
-const Device = React.lazy(() => import(/* webpackChunkName: "Device" */"@Src/pages/Device"))
-const RandomColor = React.lazy(() => import(/* webpackChunkName: "RandomColor" */"@Src/pages/RandomColor"))
+const Home = React.lazy(() => import(/* webpackChunkName: 'Home' */'@Src/pages/Home'))
+const Signin = React.lazy(() => import(/* webpackChunkName: 'Signin' */'@Src/pages/Home'))
+const NotFound = React.lazy(() => import(/* webpackChunkName: 'NotFound' */'@Src/pages/NotFound'))
 
 function Contents() {
   const location = useLocation()
@@ -33,28 +32,21 @@ function Contents() {
       unmountOnExit
     >
       <Switch location={location}>
-        <Route exact sensitive path="/device">
+        <Route exact sensitive path='/signin'>
           <PageContainer>
             <Suspense fallback={<Loading />}>
-              <Device />
+              <Signin />
             </Suspense>
           </PageContainer>
         </Route>
-        <Route exact sensitive path="/random-color">
-          <PageContainer>
-            <Suspense fallback={<Loading />}>
-              <RandomColor />
-            </Suspense>
-          </PageContainer>
-        </Route>
-        <Route exact sensitive path="/">
+        <Route exact sensitive path='/'>
           <PageContainer>
             <Suspense fallback={<Loading />}>
               <Home />
             </Suspense>
           </PageContainer>
         </Route>
-        <Route path="*">
+        <Route path='*'>
           <PageContainer>
             <Suspense fallback={<Loading />}>
               <NotFound />

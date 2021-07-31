@@ -1,17 +1,17 @@
-import React, { useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { Dispatch } from "redux"
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Dispatch } from 'redux'
 import {
   Button, Dropdown, Menu, message,
-} from "antd"
+} from 'antd'
 import {
   CaretDownOutlined, LoadingOutlined,
-} from "@ant-design/icons"
-import i18n from "i18next"
+} from '@ant-design/icons'
+import i18n from 'i18next'
 
-import { State } from "@Src/store"
-import { availableLangs, getLangTitle } from "@Src/i18n/datas"
-import { Action } from "@Src/store/globalSettings"
+import { State } from '@Src/store'
+import { availableLangs, getLangTitle } from '@Src/i18n/datas'
+import { Action } from '@Src/store/globalSettings'
 
 export default function SwitchLang() {
   const [isLoading, setIsLoading] = useState(false)
@@ -19,7 +19,7 @@ export default function SwitchLang() {
   const dispatch = useDispatch<Dispatch<Action>>()
 
   if (availableLangs.length <= 1) {
-    return <Button disabled size="small">
+    return <Button disabled size='small'>
       {getLangTitle(lang)}
     </Button>
   }
@@ -34,7 +34,7 @@ export default function SwitchLang() {
         setIsLoading(false)
         if (!err) {
           dispatch({
-            type: "@globalSettings/i18n",
+            type: '@globalSettings/i18n',
             value: tarLang,
           })
         } else {
@@ -50,10 +50,10 @@ export default function SwitchLang() {
     }
   </Menu>
 
-  return <Dropdown disabled={isLoading} overlay={menu} trigger={["click"]}>
+  return <Dropdown disabled={isLoading} overlay={menu} trigger={['click']}>
     <Button
-      type="primary"
-      size="small"
+      type='primary'
+      size='small'
     >
       {getLangTitle(lang)}
       {

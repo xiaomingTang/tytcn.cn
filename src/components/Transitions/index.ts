@@ -1,4 +1,4 @@
-import moduledStyles from "./index.module.less"
+import moduledStyles from './index.module.less'
 
 export const Styles = moduledStyles
 
@@ -29,10 +29,10 @@ export function getTransitionClassName(styleMap: Record<string, string>, rawClas
 }
 
 export const transitionClassNameMap = {
-  zoom: getTransitionClassName(Styles, "zoom"),
-  rotate: getTransitionClassName(Styles, "rotate"),
-  wobble: getTransitionClassName(Styles, "wobble"),
-  layer: getTransitionClassName(Styles, "layer"),
+  zoom: getTransitionClassName(Styles, 'zoom'),
+  rotate: getTransitionClassName(Styles, 'rotate'),
+  wobble: getTransitionClassName(Styles, 'wobble'),
+  layer: getTransitionClassName(Styles, 'layer'),
 }
 
 export type TransitionType = keyof typeof transitionClassNameMap

@@ -1,9 +1,9 @@
-import React from "react"
-import ReactDOM from "react-dom"
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import AppRoute from "./routes"
+import AppRoute from './routes'
 
 ReactDOM.render(
   <AppRoute />,
-  document.querySelector("#app"),
+  document.querySelector('#app'),
 )

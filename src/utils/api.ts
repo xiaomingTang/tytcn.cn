@@ -1,9 +1,9 @@
-import axios from "axios"
+import axios from 'axios'
 
 export const cancelSource = axios.CancelToken.source()
 
 export const http = axios.create({
-  baseURL: "/",
+  baseURL: '/',
   withCredentials: true,
   headers: {},
 })

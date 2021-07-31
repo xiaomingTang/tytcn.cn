@@ -5,6 +5,6 @@ interface propTypes {
   right?: number | string;
 }
 
-declare module "react-fps-stats" {
+declare module 'react-fps-stats' {
   export default class FPSStats extends React.PureComponent<propTypes> {}
 }

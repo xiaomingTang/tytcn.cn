@@ -1,44 +1,44 @@
-import React from "react"
-import { Link } from "react-router-dom"
+import React from 'react'
+import { Link } from 'react-router-dom'
 import {
   Button, Divider,
-} from "antd"
-import { useTranslation } from "react-i18next"
-import { useSelector } from "react-redux"
-import { useRandomSoftColors } from "xiaoming-hooks"
+} from 'antd'
+import { useTranslation } from 'react-i18next'
+import { useSelector } from 'react-redux'
+import { useRandomSoftColors } from 'xiaoming-hooks'
 
-import SwitchLang from "@Src/components/SwitchLang"
-import SwitchTransitionType from "@Src/components/SwitchTransitionType"
-import { Footer } from "@Src/components/Footer"
-import { State } from "@Src/store"
-import { ClearCacheForLocalhostOnly } from "@Src/components/ClearCacheForLocalhostOnly"
+import SwitchLang from '@Src/components/SwitchLang'
+import SwitchTransitionType from '@Src/components/SwitchTransitionType'
+import { Footer } from '@Src/components/Footer'
+import { State } from '@Src/store'
+import { ClearCacheForLocalhostOnly } from '@Src/components/ClearCacheForLocalhostOnly'
 
 function Home() {
   const { t } = useTranslation()
   const [backgroundColor, color] = useRandomSoftColors()
   const { deferredPrompt } = useSelector((state: State) => state.globalSettings)
 
-  return <div key="Home" style={{ padding: "10px" }}>
+  return <div key='Home' style={{ padding: '10px' }}>
     <p style={{
-      padding: ".5em 1em",
-      fontSize: "2em",
+      padding: '.5em 1em',
+      fontSize: '2em',
       color,
       backgroundColor,
     }}>this is <strong>Home page</strong></p>
-    <p>go to <Link to="/device">My Device</Link></p>
-    <p>go to <Link to="/random-color">random color page</Link></p>
-    <p>go to <Link to="/not-exist-path">not-exist-path</Link></p>
+    <p>go to <Link to='/device'>My Device</Link></p>
+    <p>go to <Link to='/random-color'>random color page</Link></p>
+    <p>go to <Link to='/not-exist-path'>not-exist-path</Link></p>
     <p>variable from process.env: process.env.APP_NAME is: {process.env.APP_NAME}</p>
 
     <Divider>Redux</Divider>
-    <p>{t("declaration")} <SwitchLang /></p>
+    <p>{t('declaration')} <SwitchLang /></p>
     <p>页面切换动画: <SwitchTransitionType /></p>
     {
       deferredPrompt && <p>
         <span>您还可以将本站 </span>
         <Button
-          type="primary"
-          size="small"
+          type='primary'
+          size='small'
           onClick={() => {
             if (deferredPrompt) {
               deferredPrompt.prompt()
