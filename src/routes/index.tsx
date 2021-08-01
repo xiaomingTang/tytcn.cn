@@ -15,7 +15,7 @@ import { PageContainer } from '@Src/components/PageContainer'
 import { transitionClassNameMap } from '@Src/components/Transitions'
 
 const Home = React.lazy(() => import(/* webpackChunkName: 'Home' */'@Src/pages/Home'))
-const Signin = React.lazy(() => import(/* webpackChunkName: 'Signin' */'@Src/pages/Home'))
+const Signin = React.lazy(() => import(/* webpackChunkName: 'Signin' */'@Src/pages/Signin'))
 const NotFound = React.lazy(() => import(/* webpackChunkName: 'NotFound' */'@Src/pages/NotFound'))
 
 function Contents() {

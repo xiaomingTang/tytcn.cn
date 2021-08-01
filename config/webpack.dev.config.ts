@@ -20,9 +20,9 @@ const devWebpackConfig = merge(commonWebpackConfig, {
     proxy: [
       {
         context: [
-          '/your-custom-api',
+          '/api',
         ],
-        target: 'https://your-website.com',
+        target: 'http://localhost:3000/',
         secure: false,
         changeOrigin: true,
       }

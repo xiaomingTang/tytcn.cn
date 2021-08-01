@@ -31,7 +31,9 @@ module.exports = {
     'import/extensions': 'off',
     'linebreak-style': 'off',
     'quotes': ['error', 'single'],
-    'indent': ['error', 2],
+    'indent': ['error', 2, {
+      'SwitchCase': 1,
+    }],
     'no-console': 'off',
     'semi': ['error', 'never'],
     'react-hooks/rules-of-hooks': 'error',

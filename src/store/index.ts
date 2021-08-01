@@ -10,13 +10,21 @@ import {
   Action as GlobalSettingsAction,
 } from './globalSettings'
 
+import {
+  initState as userInitState,
+  reducer as userReducer,
+  Action as UserAction,
+} from './user'
+
 const initState = {
   globalSettings: globalSettingsInitState,
+  user: userInitState,
 }
 export type State = typeof initState
 
 const reducer = combineReducers({
   globalSettings: globalSettingsReducer,
+  user: userReducer,
 })
 
 const store = createStore(reducer, initState, applyMiddleware(
@@ -24,7 +32,7 @@ const store = createStore(reducer, initState, applyMiddleware(
   // logger,
 ))
 
-export type SyncAction = GlobalSettingsAction
+export type SyncAction = GlobalSettingsAction | UserAction
 export type AsyncAction<R> = ThunkAction<Promise<R>, State, null, SyncAction>
 
 export type MixedDispatch = ThunkDispatch<State, null, SyncAction>
