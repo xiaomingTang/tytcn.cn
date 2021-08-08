@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
+import { Storage } from './storage'
 
 export const cancelSource = axios.CancelToken.source()
 
@@ -33,8 +34,17 @@ axiosInstance.interceptors.response.use((res) => {
 })
 
 export const http = {
-  request<T = any>(config: AxiosRequestConfig) {
-    return axiosInstance.request(config) as Promise<T>
+  request<T = any>({
+    headers,
+    ...config
+  }: AxiosRequestConfig) {
+    return axiosInstance.request({
+      headers: {
+        Authorization: Storage.get('Authorization') ?? '',
+        ...headers,
+      },
+      ...config,
+    }) as Promise<T>
   },
   get<T = any>(url: string, config?: AxiosRequestConfig) {
     return axiosInstance.request({

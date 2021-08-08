@@ -1,30 +1,24 @@
 import { State as UserState } from '@Src/store/user'
 
-export interface SigninByTokenQuery {
-  username: string;
-  token: string;
+// 登录
+export interface SigninQuery {
+  accountType: 'email' | 'phone';
+  signinType: 'passport' | 'authCode' | 'qrcode';
+  account: string;
+  code: string;
 }
 
-export type SigninByTokenRes = UserState
+export type SigninRes = UserState
 
-export interface SigninByPassportQuery {
-  username: string;
-  passport: string;
+// 获取验证码
+export interface GetAuthCodeQuery {
+  accountType: 'email' | 'phone';
+  account: string;
 }
 
-export type SigninByPassportRes = UserState
+export type GetAuthCodeRes = string;
 
-export interface SigninByAuthCodeQuery {
-  username: string;
-  authCode: string;
-}
-
-export type SigninByAuthCodeRes = UserState
-
-export type SigninByQrcodeQuery = void
-
-export type SigninByQrcodeRes = UserState
-
+// 获取登录二维码
 export type GetQrcodeQuery = void
 
 export interface GetQrcodeRes {
@@ -35,6 +29,7 @@ export interface GetQrcodeRes {
   expiredAt: number;
 }
 
+// 检查二维码登录是否成功
 export interface CheckQrcodeSigninQuery {
   token: string;
 }

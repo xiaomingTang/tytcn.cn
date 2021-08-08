@@ -1,11 +1,24 @@
 import { ensureImpossibleAction } from './utils'
 
+export enum UserOnlineState {
+  On = 'On',
+  Off = 'Off',
+}
+
 export interface State {
   id: string;
   nickname: string;
   avatar: string;
   token: string;
-  usageScore: number;
+  phone: string;
+  email: string;
+  onlineState: UserOnlineState;
+  friends: State[];
+  roles: string[];
+  groups: string[];
+  ownGroups: string[];
+  postedMessages: string[];
+  receivedMessages: string[];
 }
 
 export const initState: State = {
@@ -13,7 +26,15 @@ export const initState: State = {
   nickname: '',
   avatar: '',
   token: '',
-  usageScore: 0,
+  phone: '',
+  email: '',
+  onlineState: UserOnlineState.Off,
+  friends: [],
+  roles: [],
+  groups: [],
+  ownGroups: [],
+  postedMessages: [],
+  receivedMessages: [],
 }
 
 export type Action = {

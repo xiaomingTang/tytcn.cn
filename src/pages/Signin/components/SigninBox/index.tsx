@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from 'react'
 import {
-  Button, Form, FormItemProps, FormProps, Input, Tabs,
+  Button, Form, FormItemProps, FormProps, Input, message, Tabs,
 } from 'antd'
+import { isMobilePhone, isEmail } from 'class-validator'
+
 import { UserModel } from '@Src/models/user'
-import { http, useApiWhen } from '@Src/utils/api'
-import { isPhoneNumber, isEmail } from 'class-validator'
+import { Storage } from '@Src/utils/storage'
 
 import Styles from './index.module.less'
 import { Apis } from '../../services'
@@ -23,7 +24,7 @@ const accountRules: Rules = [
   {
     validator(_, value = '') {
       return new Promise((resolve, reject) => {
-        if (isPhoneNumber(value, 'CN') || isEmail(value)) {
+        if (isMobilePhone(value, 'zh-CN') || isEmail(value)) {
           resolve(true)
         } else {
           reject(new Error('请输入有效的手机号或邮箱'))
@@ -63,18 +64,18 @@ const authCodeRules: Rules = [
 
 function signinBy(signinType: SigninType) {
   const onFinish: FormProps['onFinish'] = ({ account, code }) => {
-    http.request({
-      method: 'post',
-      url: '/user/signin',
-      data: {
-        account,
-        code,
-        signinType,
-        accountType: isEmail(account) ? 'email' : 'phone',
-      },
+    Apis.signin({
+      account,
+      code,
+      signinType,
+      accountType: isEmail(account) ? 'email' : 'phone',
     })
-      .then(console.log)
-      .catch(console.warn)
+      .then((res) => {
+        Storage.set('Authorization', `Bearer ${res.token}`)
+      })
+      .catch((err) => {
+        message.error(err.message)
+      })
   }
   return onFinish
 }
@@ -107,14 +108,14 @@ export function SigninBox({
               required
               rules={accountRules}
             >
-              <Input placeholder='手机号或邮箱' />
+              <Input allowClear placeholder='手机号或邮箱' />
             </Form.Item>
             <Form.Item
               name='code'
               required
               rules={passwordRules}
             >
-              <Input placeholder='密码(6-16位英文+数字)' />
+              <Input allowClear placeholder='密码(6-16位英文+数字)' />
             </Form.Item>
             <Form.Item>
               <Button
@@ -127,7 +128,7 @@ export function SigninBox({
             </Form.Item>
           </Form>
         </TabPane>
-        <TabPane key='authCode' tab='验证码登录/注册'>
+        <TabPane key='authCode' tab='验证码登录/注册' disabled>
           <Form onFinish={signinBy('authCode')} validateTrigger={'onBlur'}>
             <Form.Item
               name='account'
@@ -145,7 +146,7 @@ export function SigninBox({
               required
               rules={authCodeRules}
             >
-              <Input placeholder='验证码(4 位)' />
+              <Input allowClear placeholder='验证码(4 位)' />
             </Form.Item>
             <p className={Styles.notice}>如果您的手机或邮箱尚未注册本网站, 将会为您自动注册</p>
             <Form.Item>
@@ -159,8 +160,8 @@ export function SigninBox({
             </Form.Item>
           </Form>
         </TabPane>
-        <TabPane key='qrcode' tab='扫码登录'>
-          扫码登录
+        <TabPane key='qrcode' tab='扫码登录' disabled>
+          暂不支持扫码登录
         </TabPane>
       </Tabs>
     </div>

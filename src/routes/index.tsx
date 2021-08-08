@@ -2,7 +2,7 @@ import { hot } from 'react-hot-loader/root'
 import React, { Suspense } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import {
-  HashRouter as Router, Switch, useLocation, Route,
+  BrowserRouter as Router, Switch, useLocation, Route,
 } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
