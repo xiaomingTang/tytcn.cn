@@ -1,3 +1,4 @@
+import { UserModel } from '@Src/models/user'
 import { ensureImpossibleAction } from './utils'
 
 export enum UserOnlineState {
@@ -21,7 +22,7 @@ export interface State {
   receivedMessages: string[];
 }
 
-export const initState: State = {
+export const initState: State = Object.values(UserModel.getAllLocalUsers())[0] || {
   id: '',
   nickname: '',
   avatar: '',

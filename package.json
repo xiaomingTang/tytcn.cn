@@ -57,6 +57,7 @@
     "three": "^0.127.0",
     "throttle-debounce": "^3.0.1",
     "url-polyfill": "^1.1.12",
+    "vconsole": "^3.9.1",
     "xiaoming-hooks": "^0.0.3"
   },
   "devDependencies": {

@@ -12,6 +12,6 @@ i18n
     fallbackLng: defaultLang,
     fallbackNS: 'translation',
     backend: {
-      loadPath: './static/i18n-locales/{{lng}}/{{ns}}.json',
+      loadPath: '/static/i18n-locales/{{lng}}/{{ns}}.json',
     },
   })

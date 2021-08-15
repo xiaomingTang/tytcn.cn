@@ -25,7 +25,10 @@ export class UserModel {
     if (newUser === null) {
       delete users[id]
     } else {
-      users[id] = newUser
+      users[newUser.id] = {
+        ...newUser,
+        token: '',
+      }
     }
     Storage.setAndStringify<LocalUsers>(STORAGE_KEY.USER_MODEL, users)
   }
@@ -36,20 +39,5 @@ export class UserModel {
 
   static setLastOnlineUserId(userId: string | null) {
     Storage.set(STORAGE_KEY.LAST_ONLINE_USER_ID, userId)
-  }
-
-  static sortUsers(users: UserState[]) {
-    const newUsers = [...users]
-    const lastOnlineUserId = UserModel.getLastOnlineUserId()
-    newUsers.sort((a, b) => {
-      if (a.id === lastOnlineUserId) {
-        return a.usageScore - b.usageScore + 2
-      }
-      if (b.id === lastOnlineUserId) {
-        return a.usageScore - b.usageScore - 2
-      }
-      return a.usageScore - b.usageScore
-    })
-    return newUsers
   }
 }

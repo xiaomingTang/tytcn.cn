@@ -71,7 +71,10 @@ function signinBy(signinType: SigninType) {
       accountType: isEmail(account) ? 'email' : 'phone',
     })
       .then((res) => {
+        console.log(res.token)
         Storage.set('Authorization', `Bearer ${res.token}`)
+        UserModel.setLocalUser(res.id, res)
+        message.success('登录成功')
       })
       .catch((err) => {
         message.error(err.message)
@@ -87,11 +90,13 @@ export function SigninBox({
     if (initSigninType) {
       return initSigninType
     }
-    const localUsers = UserModel.sortUsers(Object.values(UserModel.getAllLocalUsers()))
+    const localUsers = Object.values(UserModel.getAllLocalUsers())
     if (localUsers.length > 0) {
       return 'passport'
     }
-    return 'authCode'
+    // return 'authCode'
+    // authCode 暂不可用
+    return 'passport'
   })
 
   return <div className={Styles.container}>
@@ -115,7 +120,7 @@ export function SigninBox({
               required
               rules={passwordRules}
             >
-              <Input allowClear placeholder='密码(6-16位英文+数字)' />
+              <Input type='password' allowClear placeholder='密码(6-16位英文+数字)' />
             </Form.Item>
             <Form.Item>
               <Button
