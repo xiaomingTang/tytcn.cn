@@ -1,3 +1,5 @@
+import { State } from '@Src/store'
+
 export enum MessageType {
   Text = 'Text',
   Image = 'Image',
@@ -5,8 +7,7 @@ export enum MessageType {
   File = 'File',
 }
 
-// 登录
-export interface Message {
+export type SendMessageQuery = {
   content: string;
   type: MessageType;
   fromUserId: string;
@@ -14,11 +15,21 @@ export interface Message {
   toGroupIds: string[];
 }
 
-export type SendMessageQuery = Message
-
 export type SendMessageRes = string
 
-export type GetMessageRes = Message
+export type GetMessageRes = {
+  id: string;
+  type: MessageType;
+  content: string;
+  fromUser: State['user'];
+  toGroups: State['user'][];
+  toUsers: {
+    id: string;
+    name: string;
+    notice: string;
+    owner: State['user'];
+  }[];
+}
 
 export interface GetMessageListQuery {
   fromUserId?: string;
@@ -32,4 +43,4 @@ export interface GetMessageListQuery {
   type?: MessageType;
 }
 
-export type GetMessageListRes = Message[]
+export type GetMessageListRes = GetMessageRes[]

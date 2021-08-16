@@ -97,54 +97,82 @@ export const http = {
   },
 }
 
+interface Ret<T> {
+  loading: boolean;
+  error: string;
+  data: T | undefined;
+  update: () => Promise<void>;
+}
+
 /**
- * 警告⚠️⚠️⚠️: data 明明类型声明了 undefined, 但不知道为什么提示不出来, 使用时需谨记!!!
- * - pipe 不在 useEffect DependencyList 中(变化 **不会** 重新发送请求)
+ * - pipe & afterUpdate 不在 useEffect DependencyList 中(变化 **不会** 重新发送请求)
  * - ...args 在 useEffect DependencyList 中(变化 **会** 重新发送请求)
  * @param enable 是否执行 factory
  * @param factory common/utils/api.ts 里面类似的函数
- * @param pipe 对 factory 请求返回值进行处理, 并返回新的值
  * @param args factory 的参数
+ * @param pipe 对 factory 请求返回值进行处理, 并返回新的值
+ * @param afterUpdate factory 请求成功后的回调
  * @returns factory 返回值 经过 pipe 处理后的值
  */
+export function useApiWhen<Args extends unknown[], T>(
+  enable: boolean,
+  factory: (...args: Args) => Promise<T>,
+  args: Args,
+): Ret<T>
 export function useApiWhen<Args extends unknown[], T, S>(
   enable: boolean,
   factory: (...args: Args) => Promise<T>,
-  pipe: (data: T) => S,
   args: Args,
+  pipe: (res: T) => S,
+  afterUpdate?: () => void,
+): Ret<S>
+export function useApiWhen<Args extends unknown[], T, S>(
+  enable: boolean,
+  factory: (...args: Args) => Promise<T>,
+  args: Args,
+  pipe?: (res: T) => S,
+  afterUpdate?: () => void,
 ) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [data, setData] = useState<S | undefined>()
-  const [t, setT] = useState(Date.now())
-  const forceUpdate = useCallback(() => {
-    setT(Date.now())
-  }, [])
 
-  useEffect(() => {
+  const update = useCallback(() => {
     if (enable && factory) {
       setError('')
       setLoading(true)
-      factory(...args)
+      return factory(...args)
         .then((res) => {
-          setData(pipe(res))
+          if (pipe) {
+            setData(pipe(res))
+          } else {
+            setData(data)
+          }
+          if (afterUpdate) {
+            afterUpdate()
+          }
         })
         .finally(() => {
           setLoading(false)
         })
         .catch((err) => {
           setError((err as Error)?.message || '请稍后再试')
-          console.error(err)
         })
     }
+    return Promise.reject(new Error('unavailable'))
     // args 以 ...args 的形式处于 dependencyList 中, 因为我们使用时就是 ...args
+    // pipe & afterUpdate 不在 DependencyList 中
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t, enable, factory, ...args])
+  }, [enable, factory, ...args])
+
+  useEffect(() => {
+    update()
+  }, [update])
 
   return {
     loading,
     error,
     data,
-    forceUpdate,
+    update,
   }
 }

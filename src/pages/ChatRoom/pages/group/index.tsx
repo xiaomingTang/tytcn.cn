@@ -22,7 +22,7 @@ function GroupChatRoom() {
     toUserId: groupId,
   }), [user.id, groupId])
 
-  const { data: messageList = [] } = useApiWhen(!!(groupId && user.id), Apis.getMessageList, (res) => res, [params])
+  const { data: messageList = [] } = useApiWhen(!!(groupId && user.id), Apis.getMessageList, [params])
 
   const onSubmit = useCallback(async (content: string) => {
     if (user.id && groupId) {
