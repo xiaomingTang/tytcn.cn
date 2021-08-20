@@ -1,24 +1,36 @@
 import React, { useState, useCallback } from 'react'
 import {
-  Button, Form, FormItemProps, FormProps, Input, message, Tabs,
+  Avatar, Button, Form, FormItemProps, FormProps, Input, message, Tabs,
 } from 'antd'
 import { isMobilePhone, isEmail } from 'class-validator'
 
+import { State as UserState } from '@Src/store/user'
 import { UserModel } from '@Src/models/user'
 import { Storage } from '@Src/utils/storage'
+import { SigninType } from '@Src/constants'
 
-import Styles from './index.module.less'
+import IconImg from '../../assets/icon.png'
 import { Apis } from '../../services'
-
-type SigninType = 'passport' | 'authCode' | 'qrcode'
+import Styles from './index.module.less'
 
 interface Props {
-  initSigninType?: SigninType;
+  signinType?: SigninType;
+  onSuccess?: (user: UserState) => void;
 }
 
 const { TabPane } = Tabs
 
-type Rules = FormItemProps<any>['rules']
+function checkIsValidAuthCode(value = ''): Promise<true> {
+  return new Promise((resolve, reject) => {
+    if (value.length !== 4) {
+      reject(new Error('请输入 4 位验证码'))
+    } else {
+      resolve(true)
+    }
+  })
+}
+
+type Rules = Required<FormItemProps<any>>['rules']
 
 const accountRules: Rules = [
   {
@@ -51,18 +63,23 @@ const passwordRules: Rules = [
 const authCodeRules: Rules = [
   {
     validator(_, value = '') {
-      return new Promise((resolve, reject) => {
-        if (value.length !== 4) {
-          reject(new Error('请输入 4 位验证码'))
-        } else {
-          resolve(true)
-        }
-      })
+      return checkIsValidAuthCode(value)
     },
   },
 ]
 
-function signinBy(signinType: SigninType) {
+const defaultSigninType: Required<Props>['signinType'] = 'passport'
+
+const defaultOnSuccess: Required<Props>['onSuccess'] = () => {
+  message.success('登录成功, 即将跳转...')
+  window.setTimeout(() => {
+    window.location.href = new URL(window.location.href).searchParams.get('from') || '/'
+  }, 500)
+}
+
+function signinBy({
+  signinType = defaultSigninType, onSuccess = defaultOnSuccess,
+}: Props) {
   const onFinish: FormProps['onFinish'] = ({ account, code }) => {
     Apis.signin({
       account,
@@ -71,10 +88,9 @@ function signinBy(signinType: SigninType) {
       accountType: isEmail(account) ? 'email' : 'phone',
     })
       .then((res) => {
-        console.log(res.token)
         Storage.set('Authorization', `Bearer ${res.token}`)
         UserModel.setLocalUser(res.id, res)
-        message.success('登录成功')
+        onSuccess(UserModel.getAllLocalUsers()[res.id])
       })
       .catch((err) => {
         message.error(err.message)
@@ -83,8 +99,25 @@ function signinBy(signinType: SigninType) {
   return onFinish
 }
 
+async function fetchAuthCode(account: string) {
+  try {
+    if (!isMobilePhone(account, 'zh-CN') && !isEmail(account)) {
+      throw new Error('请输入有效的手机号或邮箱')
+    }
+    const authCode = await Apis.getAuthCode({
+      account,
+      accountType: isEmail(account) ? 'email' : 'phone',
+      codeType: 'signin',
+    })
+    message.success(`您的验证码为 ${authCode}`)
+  } catch (err) {
+    message.error(err.message)
+  }
+}
+
 export function SigninBox({
-  initSigninType,
+  signinType: initSigninType,
+  onSuccess,
 }: Props) {
   const [signinType, setSigninType] = useState((): SigninType => {
     if (initSigninType) {
@@ -94,20 +127,24 @@ export function SigninBox({
     if (localUsers.length > 0) {
       return 'passport'
     }
-    // return 'authCode'
+    return 'authCode'
     // authCode 暂不可用
-    return 'passport'
+    // 默认返回 'passport'
+    // return 'passport'
   })
 
   return <div className={Styles.container}>
     <div className={Styles.header}>
-      登录 tytcn.cn
+      <Avatar src={IconImg} shape='square' alt={process.env.APP_NAME} /> 登录 {process.env.APP_NAME}
     </div>
 
     <div className={Styles.body}>
       <Tabs activeKey={signinType} onChange={(key) => setSigninType(key as SigninType)}>
         <TabPane key='passport' tab='密码登录'>
-          <Form onFinish={signinBy('passport')} validateTrigger={'onBlur'}>
+          <Form onFinish={signinBy({
+            signinType: 'passport',
+            onSuccess,
+          })} validateTrigger={'onBlur'}>
             <Form.Item
               name='account'
               required
@@ -133,8 +170,12 @@ export function SigninBox({
             </Form.Item>
           </Form>
         </TabPane>
-        <TabPane key='authCode' tab='验证码登录/注册' disabled>
-          <Form onFinish={signinBy('authCode')} validateTrigger={'onBlur'}>
+
+        <TabPane key='authCode' tab='验证码登录/注册'>
+          <Form onFinish={signinBy({
+            signinType: 'authCode',
+            onSuccess,
+          })} validateTrigger={'onBlur'}>
             <Form.Item
               name='account'
               required
@@ -144,6 +185,12 @@ export function SigninBox({
                 placeholder='手机号或邮箱'
                 allowClear
                 enterButton='获取验证码'
+                onSearch={(account = '') => {
+                  fetchAuthCode(account)
+                }}
+                onPressEnter={(e) => {
+                  e.stopPropagation()
+                }}
               />
             </Form.Item>
             <Form.Item
@@ -154,6 +201,7 @@ export function SigninBox({
               <Input allowClear placeholder='验证码(4 位)' />
             </Form.Item>
             <p className={Styles.notice}>如果您的手机或邮箱尚未注册本网站, 将会为您自动注册</p>
+            <p className={Styles.notice}>(本网站暂未接入验证码服务, 所以你点击获取验证码, 将会直接弹窗告诉你, 你再填入就可以了)</p>
             <Form.Item>
               <Button
                 block
@@ -165,7 +213,8 @@ export function SigninBox({
             </Form.Item>
           </Form>
         </TabPane>
-        <TabPane key='qrcode' tab='扫码登录' disabled>
+
+        <TabPane key='qrcode' tab='扫码登录'>
           暂不支持扫码登录
         </TabPane>
       </Tabs>

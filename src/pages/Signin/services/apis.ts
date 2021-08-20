@@ -7,9 +7,9 @@ export async function signin(data: Types.SigninQuery) {
   })
 }
 
-export async function getAuthCode(params: Types.GetAuthCodeQuery) {
-  return http.get<Types.GetAuthCodeRes>('/authCode', {
-    params,
+export async function getAuthCode(data: Types.GetAuthCodeQuery) {
+  return http.post<Types.GetAuthCodeRes>('/auth-code/new', {
+    data,
   })
 }
 

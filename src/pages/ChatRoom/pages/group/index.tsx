@@ -7,13 +7,14 @@ import { useParams } from 'react-router-dom'
 
 import { State } from '@Src/store'
 import { useApiWhen } from '@Src/utils/api'
+import { MessageType } from '@Src/constants'
 
 import { Apis, Types } from '../../services'
-import { MessageType } from '../../services/types'
 import { InputArea } from '../../components/InputArea'
 
 import Styles from './index.module.less'
 
+// 本页等到 ../user 完成后再来修改
 function GroupChatRoom() {
   const user = useSelector<State, State['user']>((state) => state.user)
   const { groupId } = useParams<{ groupId: string }>()

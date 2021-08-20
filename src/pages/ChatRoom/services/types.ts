@@ -1,11 +1,5 @@
 import { State } from '@Src/store'
-
-export enum MessageType {
-  Text = 'Text',
-  Image = 'Image',
-  Video = 'Video',
-  File = 'File',
-}
+import { MessageType } from '@Src/constants'
 
 export type SendMessageQuery = {
   content: string;

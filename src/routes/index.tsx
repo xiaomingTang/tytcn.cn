@@ -34,14 +34,14 @@ function Contents() {
       unmountOnExit
     >
       <Switch location={location}>
-        <Route exact sensitive path='/chatRoom/group/:groupId'>
+        <Route exact sensitive path='/chatRoom/group/:targetGroupId'>
           <PageContainer>
             <Suspense fallback={<Loading />}>
               <GroupChatRoom />
             </Suspense>
           </PageContainer>
         </Route>
-        <Route exact sensitive path='/chatRoom/user/:userId'>
+        <Route exact sensitive path='/chatRoom/user/:targetUserId'>
           <PageContainer>
             <Suspense fallback={<Loading />}>
               <UserChatRoom />

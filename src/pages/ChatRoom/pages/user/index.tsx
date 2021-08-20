@@ -10,20 +10,21 @@ import { useParams } from 'react-router-dom'
 import { State } from '@Src/store'
 import { useApiWhen } from '@Src/utils/api'
 import { useScrollInfo } from '@Src/utils/scroll'
+import { MessageType } from '@Src/constants'
 
 import { Apis, Types } from '../../services'
-import { MessageType } from '../../services/types'
 import { InputArea } from '../../components/InputArea'
 
 import Styles from './index.module.less'
 
-function GroupChatRoom() {
+function UserChatRoom() {
   const user = useSelector<State, State['user']>((state) => state.user)
-  const { userId } = useParams<{ userId: string }>()
+  const { targetUserId } = useParams<{ targetUserId: string }>()
   const getMessageListConfig: Types.GetMessageListQuery = useMemo(() => ({
     fromUserId: user.id,
-    toUserId: userId,
-  }), [user.id, userId])
+    toUserId: targetUserId,
+    // 此处的依赖必须使用 user, 不能用 user.id, 因为 user.id 在本地有缓存
+  }), [user, targetUserId])
   const [scrollInfo, setElement] = useScrollInfo()
   const isInit = useRef(true)
   const scrollInfoRef = useRef(scrollInfo)
@@ -50,33 +51,41 @@ function GroupChatRoom() {
     }
   }, [])
 
-  const { data: messageList = [], update: updateMessageList } = useApiWhen(!!(userId && user.id), Apis.getMessageList, [getMessageListConfig], (res) => res, onMessageListUpdated)
+  // 此处只要有 targetUserId 就发送请求, 当 user.id 不存在时, 后端报 401 跳转登录
+  const { data: messageList = [], update: updateMessageList } = useApiWhen(
+    !!targetUserId,
+    Apis.getMessageList,
+    [getMessageListConfig],
+    (res) => res,
+    onMessageListUpdated,
+  )
 
   const onSubmit = useCallback(async (content: string) => {
-    if (user.id && userId) {
-      try {
-        const res = await Apis.sendMessage({
-          content,
-          fromUserId: user.id,
-          toGroupIds: [],
-          toUserIds: [userId],
-          type: MessageType.Text,
-        })
-        if (res) {
-          message.success('发送成功')
-          updateMessageList()
-        } else {
-          message.error('发送失败')
-        }
-        return !!res
-      } catch (err) {
-        message.error(err.message)
-        return false
-      }
+    if (!targetUserId) {
+      message.error('目标用户为空')
+      return false
     }
-    message.error('用户未登录')
-    return false
-  }, [user.id, userId, updateMessageList])
+    try {
+      const res = await Apis.sendMessage({
+        content,
+        fromUserId: user.id,
+        toGroupIds: [],
+        toUserIds: [targetUserId],
+        type: MessageType.Text,
+      })
+      if (res) {
+        message.success('发送成功')
+        updateMessageList()
+      } else {
+        // 正常情况不会到这儿
+        message.error('发送失败')
+      }
+      return !!res
+    } catch (err) {
+      message.error(err.message)
+      return false
+    }
+  }, [user.id, targetUserId, updateMessageList])
 
   return <div className={Styles.wrapper}>
     <div className={Styles.messageWrapper} ref={setElement}>
@@ -95,4 +104,4 @@ function GroupChatRoom() {
   </div>
 }
 
-export default GroupChatRoom
+export default UserChatRoom

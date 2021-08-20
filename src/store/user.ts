@@ -49,8 +49,8 @@ export function reducer(state = initState, action: Action): State {
   switch (action.type) {
     case '@user/update': {
       return {
-        ...state,
-        ...action.value,
+        ...initState,
+        ...(action.value ?? initState),
       }
     }
     case '@user/clear': {

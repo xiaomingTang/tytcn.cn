@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
+import { message as antdMessage } from 'antd'
+import { signin } from '@Src/pages/Signin/utils'
 import { Storage } from './storage'
 
 export const cancelSource = axios.CancelToken.source()
@@ -17,34 +19,50 @@ const axiosInstance = axios.create({
   headers: {},
 })
 
-axiosInstance.interceptors.request.use((config) => ({
+axiosInstance.interceptors.request.use(({
+  cancelToken,
+  headers,
+  ...config
+}) => ({
   // 自带 cancelToken 的就不覆盖
-  cancelToken: cancelSource.token,
+  cancelToken: cancelToken ?? cancelSource.token,
+  headers: {
+    Authorization: Storage.get('Authorization') ?? '',
+    ...headers,
+  },
   ...config,
 }))
 
 axiosInstance.interceptors.response.use((res) => {
   const {
-    status, data, message = '服务器忙',
+    status, data,
   } = res.data as TResponse<any>
+  let { message = '服务器忙' } = res.data as TResponse<any>
   if (status >= 200 && status < 300) {
     return data
+  }
+  switch (status) {
+    // 401 Unauthorized
+    case 401: {
+      message = '请登录后操作'
+      signin('modal')
+      break
+    }
+    // 403 Forbidden
+    case 403: {
+      antdMessage.error('权限不足')
+      break
+    }
+    // other error
+    default:
+      break
   }
   throw new Error(message)
 })
 
 export const http = {
-  request<T = any>({
-    headers,
-    ...config
-  }: AxiosRequestConfig) {
-    return axiosInstance.request({
-      headers: {
-        Authorization: Storage.get('Authorization') ?? '',
-        ...headers,
-      },
-      ...config,
-    }) as Promise<T>
+  request<T = any>(config: AxiosRequestConfig) {
+    return axiosInstance.request(config) as Promise<T>
   },
   get<T = any>(url: string, config?: AxiosRequestConfig) {
     return axiosInstance.request({
