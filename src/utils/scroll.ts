@@ -19,15 +19,19 @@ export function observeDOM(obj: Node, callback: () => void): Disconnect {
 
     // have the observer observe foo for changes in children
     mutationObserver.observe(obj, { childList: true, subtree: true })
-    return mutationObserver.disconnect
+    return () => {
+      mutationObserver.disconnect()
+    }
   }
 
   // fallback
   obj.addEventListener('DOMNodeInserted', callback, false)
   obj.addEventListener('DOMNodeRemoved', callback, false)
   return () => {
-    obj.removeEventListener('DOMNodeInserted', callback, false)
-    obj.removeEventListener('DOMNodeRemoved', callback, false)
+    if (obj?.nodeType === Node.ELEMENT_NODE) {
+      obj.removeEventListener('DOMNodeInserted', callback, false)
+      obj.removeEventListener('DOMNodeRemoved', callback, false)
+    }
   }
 }
 

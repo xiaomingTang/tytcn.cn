@@ -3,11 +3,14 @@ import {
   Avatar, Button, Form, FormItemProps, FormProps, Input, message, Tabs,
 } from 'antd'
 import { isMobilePhone, isEmail } from 'class-validator'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { CheckOutlined } from '@ant-design/icons'
 
 import { State as UserState } from '@Src/store/user'
 import { UserModel } from '@Src/models/user'
 import { Storage } from '@Src/utils/storage'
 import { SigninType } from '@Src/constants'
+import { useTimer } from '@Src/utils/time'
 
 import IconImg from '../../assets/icon.png'
 import { Apis } from '../../services'
@@ -99,26 +102,11 @@ function signinBy({
   return onFinish
 }
 
-async function fetchAuthCode(account: string) {
-  try {
-    if (!isMobilePhone(account, 'zh-CN') && !isEmail(account)) {
-      throw new Error('请输入有效的手机号或邮箱')
-    }
-    const authCode = await Apis.getAuthCode({
-      account,
-      accountType: isEmail(account) ? 'email' : 'phone',
-      codeType: 'signin',
-    })
-    message.success(`您的验证码为 ${authCode}`)
-  } catch (err) {
-    message.error(err.message)
-  }
-}
-
 export function SigninBox({
   signinType: initSigninType,
   onSuccess,
 }: Props) {
+  const [form] = Form.useForm()
   const [signinType, setSigninType] = useState((): SigninType => {
     if (initSigninType) {
       return initSigninType
@@ -127,24 +115,73 @@ export function SigninBox({
     if (localUsers.length > 0) {
       return 'passport'
     }
+    // 本地无用户时默认返回验证码登录
     return 'authCode'
-    // authCode 暂不可用
-    // 默认返回 'passport'
-    // return 'passport'
   })
+  const { duration, resetTimer } = useTimer()
+
+  const onFetchAuthCode = useCallback(async (account = '') => {
+    try {
+      await form.validateFields(['account'])
+    } catch (error) {
+      return
+    }
+    resetTimer({
+      target: Date.now() + 60000,
+      throttleMs: 1000,
+      type: 'COUNT_TO',
+    })
+    try {
+      const authCode = await Apis.getAuthCode({
+        account,
+        accountType: isEmail(account) ? 'email' : 'phone',
+        codeType: 'signin',
+      })
+      const key = 'unique_key_for_auth_code_copied'
+      const geneMessage = (code: string, copied = false) => (<>
+        您的验证码为 {authCode}{' '}
+        <CopyToClipboard text={authCode}
+          onCopy={() => {
+            message.success({
+              key,
+              content: geneMessage(code, true),
+              duration: 2,
+            })
+          }}
+        >
+          <Button>
+            {copied ? '已复制' : '点击复制'}
+          </Button>
+        </CopyToClipboard>
+      </>)
+      message.info({
+        key,
+        content: geneMessage(authCode),
+        duration: 3,
+      })
+    } catch (err) {
+      message.error(err.message)
+    }
+  }, [form, resetTimer])
 
   return <div className={Styles.container}>
     <div className={Styles.header}>
       <Avatar src={IconImg} shape='square' alt={process.env.APP_NAME} /> 登录 {process.env.APP_NAME}
     </div>
 
+    <Button><CheckOutlined /></Button>
+
     <div className={Styles.body}>
       <Tabs activeKey={signinType} onChange={(key) => setSigninType(key as SigninType)}>
         <TabPane key='passport' tab='密码登录'>
-          <Form onFinish={signinBy({
-            signinType: 'passport',
-            onSuccess,
-          })} validateTrigger={'onBlur'}>
+          <Form
+            form={form}
+            onFinish={signinBy({
+              signinType: 'passport',
+              onSuccess,
+            })}
+            validateTrigger={'onBlur'}
+          >
             <Form.Item
               name='account'
               required
@@ -172,10 +209,14 @@ export function SigninBox({
         </TabPane>
 
         <TabPane key='authCode' tab='验证码登录/注册'>
-          <Form onFinish={signinBy({
-            signinType: 'authCode',
-            onSuccess,
-          })} validateTrigger={'onBlur'}>
+          <Form
+            form={form}
+            onFinish={signinBy({
+              signinType: 'authCode',
+              onSuccess,
+            })}
+            validateTrigger={'onBlur'}
+          >
             <Form.Item
               name='account'
               required
@@ -184,10 +225,9 @@ export function SigninBox({
               <Input.Search
                 placeholder='手机号或邮箱'
                 allowClear
-                enterButton='获取验证码'
-                onSearch={(account = '') => {
-                  fetchAuthCode(account)
-                }}
+                enterButton={duration > 0 ? `${Math.round(duration / 1000)} s 后重试` : '获取验证码'}
+                loading={duration > 0}
+                onSearch={onFetchAuthCode}
                 onPressEnter={(e) => {
                   e.stopPropagation()
                 }}
@@ -200,7 +240,7 @@ export function SigninBox({
             >
               <Input allowClear placeholder='验证码(4 位)' />
             </Form.Item>
-            <p className={Styles.notice}>如果您的手机或邮箱尚未注册本网站, 将会为您自动注册</p>
+            <p className={Styles.notice}>未注册用户将自动注册</p>
             <p className={Styles.notice}>(本网站暂未接入验证码服务, 所以你点击获取验证码, 将会直接弹窗告诉你, 你再填入就可以了)</p>
             <Form.Item>
               <Button
@@ -214,7 +254,7 @@ export function SigninBox({
           </Form>
         </TabPane>
 
-        <TabPane key='qrcode' tab='扫码登录'>
+        <TabPane key='qrcode' tab='扫码登录' disabled>
           暂不支持扫码登录
         </TabPane>
       </Tabs>

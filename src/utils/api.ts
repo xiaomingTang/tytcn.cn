@@ -65,53 +65,53 @@ export const http = {
     return axiosInstance.request(config) as Promise<T>
   },
   get<T = any>(url: string, config?: AxiosRequestConfig) {
-    return axiosInstance.request({
+    return http.request<T>({
       ...config,
       url,
       method: 'get',
-    }) as Promise<T>
+    })
   },
   delete<T = any>(url: string, config?: AxiosRequestConfig) {
-    return axiosInstance.request({
+    return http.request<T>({
       ...config,
       url,
       method: 'delete',
-    }) as Promise<T>
+    })
   },
   head<T = any>(url: string, config?: AxiosRequestConfig) {
-    return axiosInstance.request({
+    return http.request<T>({
       ...config,
       url,
       method: 'head',
-    }) as Promise<T>
+    })
   },
   options<T = any>(url: string, config?: AxiosRequestConfig) {
-    return axiosInstance.request({
+    return http.request<T>({
       ...config,
       url,
       method: 'options',
-    }) as Promise<T>
+    })
   },
   post<T = any>(url: string, config?: AxiosRequestConfig) {
-    return axiosInstance.request({
+    return http.request<T>({
       ...config,
       url,
       method: 'post',
-    }) as Promise<T>
+    })
   },
   put<T = any>(url: string, config?: AxiosRequestConfig) {
-    return axiosInstance.request({
+    return http.request<T>({
       ...config,
       url,
       method: 'put',
-    }) as Promise<T>
+    })
   },
   patch<T = any>(url: string, config?: AxiosRequestConfig) {
-    return axiosInstance.request({
+    return http.request<T>({
       ...config,
       url,
       method: 'patch',
-    }) as Promise<T>
+    })
   },
 }
 
