@@ -4,7 +4,6 @@ import {
 } from 'antd'
 import { isMobilePhone, isEmail } from 'class-validator'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { CheckOutlined } from '@ant-design/icons'
 
 import { State as UserState } from '@Src/store/user'
 import { UserModel } from '@Src/models/user'
@@ -83,10 +82,11 @@ const defaultOnSuccess: Required<Props>['onSuccess'] = () => {
 function signinBy({
   signinType = defaultSigninType, onSuccess = defaultOnSuccess,
 }: Props) {
-  const onFinish: FormProps['onFinish'] = ({ account, code }) => {
+  // @TODO: 应该是两个 Form 共用了 form, 导致 signinType 始终没变, 有待修正
+  const onFinish: FormProps['onFinish'] = ({ account, password, authCode }) => {
     Apis.signin({
       account,
-      code,
+      code: signinType === 'passport' ? password : authCode,
       signinType,
       accountType: isEmail(account) ? 'email' : 'phone',
     })
@@ -169,12 +169,11 @@ export function SigninBox({
       <Avatar src={IconImg} shape='square' alt={process.env.APP_NAME} /> 登录 {process.env.APP_NAME}
     </div>
 
-    <Button><CheckOutlined /></Button>
-
     <div className={Styles.body}>
       <Tabs activeKey={signinType} onChange={(key) => setSigninType(key as SigninType)}>
         <TabPane key='passport' tab='密码登录'>
           <Form
+            // @TODO: 两个 <Form /> 不能用同一个 form, 否则会导致上传时
             form={form}
             onFinish={signinBy({
               signinType: 'passport',
@@ -190,7 +189,7 @@ export function SigninBox({
               <Input allowClear placeholder='手机号或邮箱' />
             </Form.Item>
             <Form.Item
-              name='code'
+              name='passport'
               required
               rules={passwordRules}
             >
@@ -234,7 +233,7 @@ export function SigninBox({
               />
             </Form.Item>
             <Form.Item
-              name='code'
+              name='authCode'
               required
               rules={authCodeRules}
             >
