@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import {
   Avatar, Button, Form, FormItemProps, FormProps, Input, message, Tabs,
 } from 'antd'
@@ -70,7 +70,7 @@ const authCodeRules: Rules = [
   },
 ]
 
-const defaultSigninType: Required<Props>['signinType'] = 'passport'
+const defaultSigninType: Required<Props>['signinType'] = 'password'
 
 const defaultOnSuccess: Required<Props>['onSuccess'] = () => {
   message.success('登录成功, 即将跳转...')
@@ -82,11 +82,10 @@ const defaultOnSuccess: Required<Props>['onSuccess'] = () => {
 function signinBy({
   signinType = defaultSigninType, onSuccess = defaultOnSuccess,
 }: Props) {
-  // @TODO: 应该是两个 Form 共用了 form, 导致 signinType 始终没变, 有待修正
   const onFinish: FormProps['onFinish'] = ({ account, password, authCode }) => {
     Apis.signin({
       account,
-      code: signinType === 'passport' ? password : authCode,
+      code: signinType === 'password' ? password : authCode,
       signinType,
       accountType: isEmail(account) ? 'email' : 'phone',
     })
@@ -106,23 +105,25 @@ export function SigninBox({
   signinType: initSigninType,
   onSuccess,
 }: Props) {
-  const [form] = Form.useForm()
+  const [passwordForm] = Form.useForm()
+  const [authCodeForm] = Form.useForm()
+  const { duration, resetTimer } = useTimer()
+
   const [signinType, setSigninType] = useState((): SigninType => {
     if (initSigninType) {
       return initSigninType
     }
     const localUsers = Object.values(UserModel.getAllLocalUsers())
     if (localUsers.length > 0) {
-      return 'passport'
+      return 'password'
     }
     // 本地无用户时默认返回验证码登录
     return 'authCode'
   })
-  const { duration, resetTimer } = useTimer()
 
   const onFetchAuthCode = useCallback(async (account = '') => {
     try {
-      await form.validateFields(['account'])
+      await authCodeForm.validateFields(['account'])
     } catch (error) {
       return
     }
@@ -162,7 +163,33 @@ export function SigninBox({
     } catch (err) {
       message.error(err.message)
     }
-  }, [form, resetTimer])
+  }, [authCodeForm, resetTimer])
+
+  // 更新表单的 account 项
+  useEffect(() => {
+    switch (signinType) {
+      case 'authCode': {
+        const account = passwordForm.getFieldValue('account')
+        if (account) {
+          authCodeForm.setFieldsValue({
+            account,
+          })
+        }
+        break
+      }
+      case 'password': {
+        const account = authCodeForm.getFieldValue('account')
+        if (account) {
+          passwordForm.setFieldsValue({
+            account,
+          })
+        }
+        break
+      }
+      default:
+        break
+    }
+  }, [authCodeForm, passwordForm, signinType])
 
   return <div className={Styles.container}>
     <div className={Styles.header}>
@@ -171,12 +198,11 @@ export function SigninBox({
 
     <div className={Styles.body}>
       <Tabs activeKey={signinType} onChange={(key) => setSigninType(key as SigninType)}>
-        <TabPane key='passport' tab='密码登录'>
+        <TabPane key='password' tab='密码登录'>
           <Form
-            // @TODO: 两个 <Form /> 不能用同一个 form, 否则会导致上传时
-            form={form}
+            form={passwordForm}
             onFinish={signinBy({
-              signinType: 'passport',
+              signinType: 'password',
               onSuccess,
             })}
             validateTrigger={'onBlur'}
@@ -189,7 +215,7 @@ export function SigninBox({
               <Input allowClear placeholder='手机号或邮箱' />
             </Form.Item>
             <Form.Item
-              name='passport'
+              name='password'
               required
               rules={passwordRules}
             >
@@ -209,7 +235,8 @@ export function SigninBox({
 
         <TabPane key='authCode' tab='验证码登录/注册'>
           <Form
-            form={form}
+            form={authCodeForm}
+            key='authCode'
             onFinish={signinBy({
               signinType: 'authCode',
               onSuccess,

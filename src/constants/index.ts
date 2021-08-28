@@ -2,7 +2,7 @@ export type AccountType = 'phone' | 'email'
 
 export type CodeType = 'signin'
 
-export type SigninType = 'passport' | 'authCode' | 'qrcode'
+export type SigninType = 'password' | 'authCode' | 'qrcode'
 
 export enum UserOnlineState {
   On = 'On',
