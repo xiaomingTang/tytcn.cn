@@ -94,8 +94,8 @@ function UserChatRoom() {
         messageListRes && messageListRes.data.map((msg) => <div key={msg.id} id={msg.id} className={Styles.messageItem}>
           <div>id: {msg.id}</div>
           <div>from: {msg.fromUser.id}</div>
-          <div>toUsers[0]: {msg.toUsers[0]?.id}</div>
-          <div>toGroups[0]: {msg.toGroups[0]?.id}</div>
+          <div>toUsers: {msg.toUsers.map((item) => item.nickname)}</div>
+          <div>toGroups: {msg.toGroups.map((item) => item.name)}</div>
           <div>content: {msg.content}</div>
         </div>)
       }

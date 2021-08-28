@@ -17,8 +17,8 @@ export type GetMessageRes = {
   type: MessageType;
   content: string;
   fromUser: State['user'];
-  toGroups: State['user'][];
-  toUsers: {
+  toUsers: State['user'][];
+  toGroups: {
     id: string;
     name: string;
     notice: string;
