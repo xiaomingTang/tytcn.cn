@@ -13,6 +13,13 @@ interface TResponse<T> {
   success: boolean;
 }
 
+export interface PagedData<T> {
+  current: number;
+  pageSize: number;
+  total: number;
+  data: T[];
+}
+
 const axiosInstance = axios.create({
   baseURL: '/api/',
   withCredentials: true,

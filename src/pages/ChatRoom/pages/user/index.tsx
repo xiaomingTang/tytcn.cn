@@ -52,7 +52,7 @@ function UserChatRoom() {
   }, [])
 
   // 此处只要有 targetUserId 就发送请求, 当 user.id 不存在时, 后端报 401 跳转登录
-  const { data: messageList = [], update: updateMessageList } = useApiWhen(
+  const { data: messageListRes, update: updateMessageList } = useApiWhen(
     !!targetUserId,
     Apis.getMessageList,
     [getMessageListConfig],
@@ -91,7 +91,7 @@ function UserChatRoom() {
     <div className={Styles.messageWrapper} ref={setElement}>
       {
         // @TODO: 设置样式布局 & api 支持翻页
-        messageList.map((msg) => <div key={msg.id} id={msg.id} className={Styles.messageItem}>
+        messageListRes && messageListRes.data.map((msg) => <div key={msg.id} id={msg.id} className={Styles.messageItem}>
           <div>id: {msg.id}</div>
           <div>from: {msg.fromUser.id}</div>
           <div>toUsers[0]: {msg.toUsers[0]?.id}</div>

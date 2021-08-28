@@ -1,5 +1,6 @@
 import { State } from '@Src/store'
 import { MessageType } from '@Src/constants'
+import { PagedData } from '@Src/utils/api'
 
 export type SendMessageQuery = {
   content: string;
@@ -37,4 +38,4 @@ export interface GetMessageListQuery {
   type?: MessageType;
 }
 
-export type GetMessageListRes = GetMessageRes[]
+export type GetMessageListRes = PagedData<GetMessageRes>

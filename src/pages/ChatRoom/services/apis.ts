@@ -8,11 +8,11 @@ export async function sendMessage(data: Types.SendMessageQuery) {
 }
 
 export async function getMessage(messageId: string) {
-  return http.get<Types.GetMessageRes>(`/message/id/${messageId}`)
+  return http.get<Types.GetMessageRes>(`/message/${messageId}`)
 }
 
-export async function getMessageList(params: Types.GetMessageListQuery) {
-  return http.get<Types.GetMessageListRes>('/message/list', {
-    params,
+export async function getMessageList(data: Types.GetMessageListQuery) {
+  return http.get<Types.GetMessageListRes>('/message/search', {
+    data,
   })
 }
