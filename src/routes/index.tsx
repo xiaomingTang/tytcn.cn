@@ -19,6 +19,7 @@ const Signin = React.lazy(() => import(/* webpackChunkName: 'Signin' */'@Src/pag
 const NotFound = React.lazy(() => import(/* webpackChunkName: 'NotFound' */'@Src/pages/NotFound'))
 const GroupChatRoom = React.lazy(() => import(/* webpackChunkName: 'GroupChatRoom' */'@Src/pages/ChatRoom/pages/group'))
 const UserChatRoom = React.lazy(() => import(/* webpackChunkName: 'UserChatRoom' */'@Src/pages/ChatRoom/pages/user'))
+const ChatRoom = React.lazy(() => import(/* webpackChunkName: 'ChatRoom' */'@Src/pages/ChatRoom/pages/index'))
 
 function Contents() {
   const location = useLocation()
@@ -45,6 +46,13 @@ function Contents() {
           <PageContainer>
             <Suspense fallback={<Loading />}>
               <UserChatRoom />
+            </Suspense>
+          </PageContainer>
+        </Route>
+        <Route exact sensitive path='/chatRoom'>
+          <PageContainer>
+            <Suspense fallback={<Loading />}>
+              <ChatRoom />
             </Suspense>
           </PageContainer>
         </Route>

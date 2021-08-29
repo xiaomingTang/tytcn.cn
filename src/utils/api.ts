@@ -184,7 +184,7 @@ export function useApiWhen<Args extends unknown[], T, S>(
           setError((err as Error)?.message || '请稍后再试')
         })
     }
-    return Promise.reject(new Error('unavailable'))
+    return Promise.reject(new Error('disabled'))
     // args 以 ...args 的形式处于 dependencyList 中, 因为我们使用时就是 ...args
     // pipe & afterUpdate 不在 DependencyList 中
     // eslint-disable-next-line react-hooks/exhaustive-deps

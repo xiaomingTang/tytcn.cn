@@ -6,38 +6,58 @@ interface LocalUsers {
 }
 
 export class UserModel {
-  static getAllLocalUsers() {
+  static getAllLocalUsers(): LocalUsers {
     return Storage.getAndParse<LocalUsers>(STORAGE_KEY.USER_MODEL) || {}
   }
 
-  static removeLocalUser(id: string) {
+  static removeLocalUser(id: string): void {
+    if (!id) {
+      return
+    }
     const users = UserModel.getAllLocalUsers()
     delete users[id]
     Storage.setAndStringify<LocalUsers>(STORAGE_KEY.USER_MODEL, users)
   }
 
-  static clearAllLocalUsers() {
+  static clearAllLocalUsers(): void {
     Storage.remove(STORAGE_KEY.USER_MODEL)
   }
 
-  static setLocalUser(id: string, newUser: UserState | null) {
+  static getLocalUser(id: string): UserState | null {
+    if (!id) {
+      return null
+    }
+    return UserModel.getAllLocalUsers()[id] ?? null
+  }
+
+  static setLocalUser(id: string, newUser: UserState | null): void {
+    if (!id) {
+      console.error('id is empty')
+      return
+    }
     const users = UserModel.getAllLocalUsers()
-    if (newUser === null) {
+    if (!newUser) {
       delete users[id]
     } else {
-      users[newUser.id] = {
+      users[id] = {
         ...newUser,
+        id,
+        // 移除 token
         token: '',
       }
     }
     Storage.setAndStringify<LocalUsers>(STORAGE_KEY.USER_MODEL, users)
   }
 
-  static getLastOnlineUserId() {
-    return Storage.get(STORAGE_KEY.LAST_ONLINE_USER_ID)
+  static getLastOnlineUserId(): string {
+    return Storage.get(STORAGE_KEY.LAST_ONLINE_USER_ID) ?? ''
   }
 
-  static setLastOnlineUserId(userId: string | null) {
+  static setLastOnlineUserId(userId = ''): void {
     Storage.set(STORAGE_KEY.LAST_ONLINE_USER_ID, userId)
+  }
+
+  static getLastOnlineUser(): UserState | null {
+    return this.getLocalUser(this.getLastOnlineUserId() ?? '') ?? null
   }
 }

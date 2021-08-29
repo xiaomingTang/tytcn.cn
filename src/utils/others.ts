@@ -2,18 +2,6 @@ import {
   useState, useEffect, Dispatch, SetStateAction,
 } from 'react'
 
-export async function delayMs<T>(ms: number, ret?: T) {
-  return new Promise((resolve) => {
-    window.setTimeout(() => {
-      resolve(ret)
-    }, ms)
-  })
-}
-
-export function voidFunc() {
-  // pass
-}
-
 export function joinSpace(...arr: (string | false | undefined | null)[]) {
   return arr.filter((item) => !!item).join(' ')
 }

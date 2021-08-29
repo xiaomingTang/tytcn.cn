@@ -1,3 +1,9 @@
+.container {
+  overflow: hidden;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+}
+
 .header {
   padding: .5em 1rem;
   text-align: center;
@@ -13,6 +19,12 @@
 }
 
 .notice {
-  font-size: .8;
-  color:#ff4d4f;
+  display: inline-block;
+  // 上面的验证码输入框有个 margin bottom 24, 所以这儿放个同样的 margin 来平衡页面
+  margin-bottom: 24px;
+  font-weight: 600;
+  font-size: .8em;
+  text-decoration: underline;
+  color:#1890ff;
+  cursor: zoom-in;
 }

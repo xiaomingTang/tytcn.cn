@@ -6,10 +6,10 @@ import React, {
 } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { useScrollInfo } from 'xiaoming-hooks'
 
 import { State } from '@Src/store'
 import { useApiWhen } from '@Src/utils/api'
-import { useScrollInfo } from '@Src/utils/scroll'
 import { MessageType } from '@Src/constants'
 
 import { Apis, Types } from '../../services'

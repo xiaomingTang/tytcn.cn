@@ -1,110 +1,39 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import {
-  Avatar, Button, Form, FormItemProps, FormProps, Input, message, Tabs,
+  Avatar, Button, Form, Input, message, Tabs, Tooltip,
 } from 'antd'
-import { isMobilePhone, isEmail } from 'class-validator'
+import { isEmail } from 'class-validator'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import { useTimer } from 'xiaoming-hooks'
 
-import { State as UserState } from '@Src/store/user'
 import { UserModel } from '@Src/models/user'
-import { Storage } from '@Src/utils/storage'
 import { SigninType } from '@Src/constants'
-import { useTimer } from '@Src/utils/time'
+import { State as UserState } from '@Src/store/user'
+import { joinSpace } from '@Src/utils/others'
+import { SearchOutlined } from '@ant-design/icons'
 
 import IconImg from '../../assets/icon.png'
 import { Apis } from '../../services'
+import {
+  accountRules, authCodeRules, passwordRules, geneOnFinish,
+} from '../../utils'
+
 import Styles from './index.module.less'
 
-interface Props {
+const { TabPane } = Tabs
+export interface SigninBoxProps {
   signinType?: SigninType;
   onSuccess?: (user: UserState) => void;
-}
-
-const { TabPane } = Tabs
-
-function checkIsValidAuthCode(value = ''): Promise<true> {
-  return new Promise((resolve, reject) => {
-    if (value.length !== 4) {
-      reject(new Error('请输入 4 位验证码'))
-    } else {
-      resolve(true)
-    }
-  })
-}
-
-type Rules = Required<FormItemProps<any>>['rules']
-
-const accountRules: Rules = [
-  {
-    validator(_, value = '') {
-      return new Promise((resolve, reject) => {
-        if (isMobilePhone(value, 'zh-CN') || isEmail(value)) {
-          resolve(true)
-        } else {
-          reject(new Error('请输入有效的手机号或邮箱'))
-        }
-      })
-    },
-  },
-]
-
-const passwordRules: Rules = [
-  {
-    validator(_, value = '') {
-      return new Promise((resolve, reject) => {
-        if (value.length < 6 || value.length > 16) {
-          reject(new Error('密码长度应为 6- 16'))
-        } else {
-          resolve(true)
-        }
-      })
-    },
-  },
-]
-
-const authCodeRules: Rules = [
-  {
-    validator(_, value = '') {
-      return checkIsValidAuthCode(value)
-    },
-  },
-]
-
-const defaultSigninType: Required<Props>['signinType'] = 'password'
-
-const defaultOnSuccess: Required<Props>['onSuccess'] = () => {
-  message.success('登录成功, 即将跳转...')
-  window.setTimeout(() => {
-    window.location.href = new URL(window.location.href).searchParams.get('from') || '/'
-  }, 500)
-}
-
-function signinBy({
-  signinType = defaultSigninType, onSuccess = defaultOnSuccess,
-}: Props) {
-  const onFinish: FormProps['onFinish'] = ({ account, password, authCode }) => {
-    Apis.signin({
-      account,
-      code: signinType === 'password' ? password : authCode,
-      signinType,
-      accountType: isEmail(account) ? 'email' : 'phone',
-    })
-      .then((res) => {
-        Storage.set('Authorization', `Bearer ${res.token}`)
-        UserModel.setLocalUser(res.id, res)
-        onSuccess(UserModel.getAllLocalUsers()[res.id])
-      })
-      .catch((err) => {
-        message.error(err.message)
-      })
-  }
-  return onFinish
+  className?: string;
+  style?: React.HTMLAttributes<HTMLDivElement>['style'];
 }
 
 export function SigninBox({
   signinType: initSigninType,
   onSuccess,
-}: Props) {
+  className = '',
+  style,
+}: SigninBoxProps) {
   const [passwordForm] = Form.useForm()
   const [authCodeForm] = Form.useForm()
   const [isFetchingAuthCode, setIsFetchingAuthCode] = useState(false)
@@ -197,7 +126,7 @@ export function SigninBox({
     }
   }, [authCodeForm, passwordForm, signinType])
 
-  return <div className={Styles.container}>
+  return <div className={joinSpace(Styles.container, className)} style={style}>
     <div className={Styles.header}>
       <Avatar src={IconImg} shape='square' alt={process.env.APP_NAME} /> 登录 {process.env.APP_NAME}
     </div>
@@ -207,7 +136,7 @@ export function SigninBox({
         <TabPane key='password' tab='密码登录'>
           <Form
             form={passwordForm}
-            onFinish={signinBy({
+            onFinish={geneOnFinish({
               signinType: 'password',
               onSuccess,
             })}
@@ -243,7 +172,7 @@ export function SigninBox({
           <Form
             form={authCodeForm}
             key='authCode'
-            onFinish={signinBy({
+            onFinish={geneOnFinish({
               signinType: 'authCode',
               onSuccess,
             })}
@@ -272,8 +201,15 @@ export function SigninBox({
             >
               <Input allowClear placeholder='验证码(4 位)' />
             </Form.Item>
-            <p className={Styles.notice}>未注册用户将自动注册</p>
-            <p className={Styles.notice}>(本网站暂未接入验证码服务, 所以你点击获取验证码, 将会直接弹窗告诉你, 你再填入就可以了)</p>
+            <Tooltip
+              trigger='click'
+              placement="topLeft"
+              title="本网站暂未接入验证码服务, 所以你点击获取验证码, 将会直接弹窗告诉你, 你再填入就可以了"
+            >
+              <b className={Styles.notice}>
+                未注册用户将自动注册 <sup><SearchOutlined /></sup>
+              </b>
+            </Tooltip>
             <Form.Item>
               <Button
                 block
