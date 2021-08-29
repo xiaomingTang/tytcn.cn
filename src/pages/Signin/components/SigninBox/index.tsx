@@ -107,6 +107,7 @@ export function SigninBox({
 }: Props) {
   const [passwordForm] = Form.useForm()
   const [authCodeForm] = Form.useForm()
+  const [isFetchingAuthCode, setIsFetchingAuthCode] = useState(false)
   const { duration, resetTimer } = useTimer()
 
   const [signinType, setSigninType] = useState((): SigninType => {
@@ -127,16 +128,21 @@ export function SigninBox({
     } catch (error) {
       return
     }
-    resetTimer({
-      target: Date.now() + 60000,
-      throttleMs: 1000,
-      type: 'COUNT_TO',
-    })
     try {
+      setIsFetchingAuthCode(true)
       const authCode = await Apis.getAuthCode({
         account,
         accountType: isEmail(account) ? 'email' : 'phone',
         codeType: 'signin',
+      }).then((res) => {
+        resetTimer({
+          target: Date.now() + 60000,
+          throttleMs: 1000,
+          type: 'COUNT_TO',
+        })
+        return res
+      }).finally(() => {
+        setIsFetchingAuthCode(false)
       })
       const key = 'unique_key_for_auth_code_copied'
       const geneMessage = (code: string, copied = false) => (<>
@@ -252,7 +258,7 @@ export function SigninBox({
                 placeholder='手机号或邮箱'
                 allowClear
                 enterButton={duration > 0 ? `${Math.round(duration / 1000)} s 后重试` : '获取验证码'}
-                loading={duration > 0}
+                loading={isFetchingAuthCode || duration > 0}
                 onSearch={onFetchAuthCode}
                 onPressEnter={(e) => {
                   e.stopPropagation()
