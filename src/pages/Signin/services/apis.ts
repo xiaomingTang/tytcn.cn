@@ -7,6 +7,14 @@ export async function signin(data: Types.SigninQuery) {
   })
 }
 
+export async function getMyself() {
+  return http.get<Types.GetMyselfRes>('/user/myself', {
+    customConfig: {
+      signinOn401: false,
+    },
+  })
+}
+
 export async function getAuthCode(data: Types.GetAuthCodeQuery) {
   return http.post<Types.GetAuthCodeRes>('/auth-code/new', {
     data,

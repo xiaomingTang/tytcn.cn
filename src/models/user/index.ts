@@ -10,15 +10,6 @@ export class UserModel {
     return Storage.getAndParse<LocalUsers>(STORAGE_KEY.USER_MODEL) || {}
   }
 
-  static removeLocalUser(id: string): void {
-    if (!id) {
-      return
-    }
-    const users = UserModel.getAllLocalUsers()
-    delete users[id]
-    Storage.setAndStringify<LocalUsers>(STORAGE_KEY.USER_MODEL, users)
-  }
-
   static clearAllLocalUsers(): void {
     Storage.remove(STORAGE_KEY.USER_MODEL)
   }
@@ -59,5 +50,27 @@ export class UserModel {
 
   static getLastOnlineUser(): UserState | null {
     return this.getLocalUser(this.getLastOnlineUserId() ?? '') ?? null
+  }
+
+  static signin(user: UserState): UserState {
+    const { id, token } = user
+    const { ...userWithoutToken } = user
+    // token 置空
+    userWithoutToken.token = ''
+    Storage.set('Authorization', `Bearer ${token}`)
+    UserModel.setLastOnlineUserId(id)
+    UserModel.setLocalUser(id, userWithoutToken)
+    return userWithoutToken
+  }
+
+  static signout(options?: {
+    clearUser?: boolean;
+  }): void {
+    const { clearUser = false } = options || {}
+    Storage.remove('Authorization')
+    if (clearUser) {
+      UserModel.setLastOnlineUserId()
+      UserModel.clearAllLocalUsers()
+    }
   }
 }

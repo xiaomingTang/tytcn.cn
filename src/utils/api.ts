@@ -30,90 +30,107 @@ axiosInstance.interceptors.request.use(({
   cancelToken,
   headers,
   ...config
-}) => ({
-  // 自带 cancelToken 的就不覆盖
-  cancelToken: cancelToken ?? cancelSource.token,
-  headers: {
-    Authorization: Storage.get('Authorization') ?? '',
-    ...headers,
-  },
-  ...config,
-}))
-
-axiosInstance.interceptors.response.use((res) => {
-  const {
-    status, data,
-  } = res.data as TResponse<any>
-  let { message = '服务器忙' } = res.data as TResponse<any>
-  if (status >= 200 && status < 300) {
-    return data
+}) => {
+  const AuthKey = 'Authorization'
+  return {
+    // 自带 cancelToken 的就不覆盖
+    cancelToken: cancelToken ?? cancelSource.token,
+    headers: {
+      ...headers,
+      Authorization: headers[AuthKey] || Storage.get(AuthKey) || '',
+    },
+    ...config,
   }
-  switch (status) {
-    // 401 Unauthorized
-    case 401: {
-      message = '请登录后操作'
-      signin('modal')
-      break
-    }
-    // 403 Forbidden
-    case 403: {
-      antdMessage.error('权限不足')
-      break
-    }
-    // other error
-    default:
-      break
-  }
-  throw new Error(message)
 })
 
+type CustomAxiosRequestConfig = AxiosRequestConfig & {
+  customConfig?: {
+    /**
+     * 是否在 服务端返回 401 时自动弹登录弹窗
+     * @default true
+     */
+    signinOn401?: boolean;
+  };
+}
+
 export const http = {
-  request<T = any>(config: AxiosRequestConfig) {
-    return axiosInstance.request(config) as Promise<T>
+  request<T = any>({
+    customConfig = {}, ...config
+  }: CustomAxiosRequestConfig) {
+    // 默认跳转登录
+    const { signinOn401 = true } = customConfig
+    return axiosInstance.request<TResponse<T>>(config).then((res) => {
+      const {
+        status, data,
+      } = res.data
+      let { message = '服务器忙' } = res.data
+      if (status >= 200 && status < 300) {
+        return data
+      }
+      switch (status) {
+        // 401 Unauthorized
+        case 401: {
+          message = '请登录后操作'
+          if (signinOn401) {
+            signin('modal')
+          }
+          break
+        }
+        // 403 Forbidden
+        case 403: {
+          antdMessage.error('权限不足')
+          break
+        }
+        // other error
+        default:
+          break
+      }
+      throw new Error(message)
+    })
   },
-  get<T = any>(url: string, config?: AxiosRequestConfig) {
+  get<T = any>(url: string, config?: CustomAxiosRequestConfig) {
     return http.request<T>({
       ...config,
       url,
       method: 'get',
     })
   },
-  delete<T = any>(url: string, config?: AxiosRequestConfig) {
+  delete<T = any>(url: string, config?: CustomAxiosRequestConfig) {
     return http.request<T>({
       ...config,
       url,
       method: 'delete',
     })
   },
-  head<T = any>(url: string, config?: AxiosRequestConfig) {
+  head<T = any>(url: string, config?: CustomAxiosRequestConfig) {
     return http.request<T>({
       ...config,
       url,
       method: 'head',
     })
   },
-  options<T = any>(url: string, config?: AxiosRequestConfig) {
+  options<T = any>(url: string, config?: CustomAxiosRequestConfig) {
     return http.request<T>({
       ...config,
       url,
       method: 'options',
     })
   },
-  post<T = any>(url: string, config?: AxiosRequestConfig) {
+  post<T = any>(url: string, config?: CustomAxiosRequestConfig) {
     return http.request<T>({
       ...config,
       url,
       method: 'post',
     })
   },
-  put<T = any>(url: string, config?: AxiosRequestConfig) {
+  put<T = any>(url: string, config?: CustomAxiosRequestConfig) {
     return http.request<T>({
       ...config,
       url,
       method: 'put',
     })
   },
-  patch<T = any>(url: string, config?: AxiosRequestConfig) {
+  patch<T = any>(url: string, config?: CustomAxiosRequestConfig) {
     return http.request<T>({
       ...config,
       url,

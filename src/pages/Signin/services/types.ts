@@ -11,6 +11,8 @@ export interface SigninQuery {
 
 export type SigninRes = UserState
 
+export type GetMyselfRes = UserState
+
 // 获取验证码
 export interface GetAuthCodeQuery {
   accountType: AccountType;

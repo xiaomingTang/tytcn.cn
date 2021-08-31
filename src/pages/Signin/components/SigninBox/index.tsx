@@ -16,7 +16,7 @@ import IconImg from '../../assets/icon.png'
 import { Apis } from '../../services'
 import {
   accountRules, authCodeRules, passwordRules, geneOnFinish,
-} from '../../utils'
+} from './utils'
 
 import Styles from './index.module.less'
 
@@ -34,6 +34,16 @@ export function SigninBox({
   className = '',
   style,
 }: SigninBoxProps) {
+  useEffect(() => {
+    Apis.getMyself().then((res) => {
+      if (res && onSuccess) {
+        onSuccess(res)
+      }
+    })
+  // onSuccess 不加入 deps, 防止失误传入频繁变动的 onSuccess 时, 导致该 api 被频繁调用
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const [passwordForm] = Form.useForm()
   const [authCodeForm] = Form.useForm()
   const [isFetchingAuthCode, setIsFetchingAuthCode] = useState(false)
