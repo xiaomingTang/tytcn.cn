@@ -1,6 +1,4 @@
-import { State } from '@Src/store'
 import { MessageType } from '@Src/constants'
-import { PagedData } from '@Src/utils/api'
 
 export type SendMessageQuery = {
   content: string;
@@ -11,31 +9,3 @@ export type SendMessageQuery = {
 }
 
 export type SendMessageRes = string
-
-export type GetMessageRes = {
-  id: string;
-  type: MessageType;
-  content: string;
-  fromUser: State['user'];
-  toUsers: State['user'][];
-  toGroups: {
-    id: string;
-    name: string;
-    notice: string;
-    owner: State['user'];
-  }[];
-}
-
-export interface GetMessageListQuery {
-  fromUserId?: string;
-
-  toUserId?: string;
-
-  toGroupId?: string;
-
-  content?: string;
-
-  type?: MessageType;
-}
-
-export type GetMessageListRes = PagedData<GetMessageRes>

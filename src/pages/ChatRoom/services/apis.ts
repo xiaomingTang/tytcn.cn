@@ -1,4 +1,6 @@
 import { http } from '@Src/utils/api'
+import { PageRes } from '@Src/services/types'
+import { Types as GlobalTypes } from '@Src/services'
 import { Types } from '.'
 
 export async function sendMessage(data: Types.SendMessageQuery) {
@@ -7,12 +9,10 @@ export async function sendMessage(data: Types.SendMessageQuery) {
   })
 }
 
-export async function getMessage(messageId: string) {
-  return http.get<Types.GetMessageRes>(`/message/${messageId}`)
+export async function getHotUsers() {
+  return http.get<PageRes<GlobalTypes.User>>('/user/hot')
 }
 
-export async function getMessageList(data: Types.GetMessageListQuery) {
-  return http.get<Types.GetMessageListRes>('/message/search', {
-    data,
-  })
+export async function getHotGroups() {
+  return http.get<PageRes<GlobalTypes.Group>>('/group/hot')
 }

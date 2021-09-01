@@ -7,6 +7,7 @@ import { ChatRoomLayout } from './components/Layout'
 import { MessageList } from './components/MessageList'
 
 import Styles from './index.module.less'
+import { Aside } from './components/Aside'
 
 function RandomComp({ content }: { content: string }) {
   const [bg, color] = useRandomSoftColors()
@@ -30,9 +31,9 @@ function ChatRoom() {
   }}>
     <ChatRoomLayout
       chatList={<RandomComp content={'chatList'} />}
-      messageList={<MessageList type='group' targetId='10387' />}
+      messageList={<MessageList type='user' targetId='10387' />}
       inputArea={<RandomComp content={'inputArea'} />}
-      aside={<RandomComp content={'aside'} />}
+      aside={<Aside />}
     />
   </div>
 }

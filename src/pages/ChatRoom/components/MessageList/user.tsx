@@ -1,6 +1,7 @@
 import { Apis, Types } from '@Src/services'
 import { State } from '@Src/store'
 import { useApiWhen } from '@Src/utils/api'
+import { Avatar } from 'antd'
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -47,6 +48,7 @@ export function UserMessageList({
         total: {messageListRes.total} <br />
         pageSize: {messageListRes.pageSize} <br />
         {messageListRes.data.map((item) => (<p key={item.id}>
+          <Avatar src={item.fromUser.avatar} />
           {item.fromUser.nickname}: - {item.content}
         </p>))}
       </div>

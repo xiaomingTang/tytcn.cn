@@ -61,6 +61,7 @@ export interface SearchUserQuery extends PageQuery {
   onlineState?: UserOnlineState;
   createdTime?: [number, number];
   updatedTime?: [number, number];
+  lastAccessTime?: [number, number];
   roles?: string[];
 }
 

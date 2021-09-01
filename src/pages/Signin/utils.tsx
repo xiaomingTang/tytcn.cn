@@ -19,6 +19,10 @@ export function signin(type: SigninBoxDisplay) {
       break
     }
     default: {
+      if (window.signinModalVisible) {
+        return
+      }
+      window.signinModalVisible = true
       const { destroy } = Modal.info({
         modalRender() {
           return <SigninBox
@@ -26,6 +30,7 @@ export function signin(type: SigninBoxDisplay) {
               pointerEvents: 'all',
             }}
             onSuccess={(user) => {
+              window.signinModalVisible = false
               destroy()
               // 更新用户信息 store
               store.dispatch({
