@@ -5,12 +5,12 @@ import {
 import { isEmail } from 'class-validator'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTimer } from 'xiaoming-hooks'
+import { SearchOutlined } from '@ant-design/icons'
 
 import { UserModel } from '@Src/models/user'
 import { SigninType } from '@Src/constants'
-import { State as UserState } from '@Src/store/user'
 import { joinSpace } from '@Src/utils/others'
-import { SearchOutlined } from '@ant-design/icons'
+import { Types } from '@Src/services'
 
 import IconImg from '../../assets/icon.png'
 import { Apis } from '../../services'
@@ -23,7 +23,7 @@ import Styles from './index.module.less'
 const { TabPane } = Tabs
 export interface SigninBoxProps {
   signinType?: SigninType;
-  onSuccess?: (user: UserState) => void;
+  onSuccess?: (user: Types.User) => void;
   className?: string;
   style?: React.HTMLAttributes<HTMLDivElement>['style'];
 }

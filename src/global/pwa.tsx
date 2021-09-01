@@ -6,7 +6,7 @@ import {
 } from 'antd'
 import { useDispatch } from 'react-redux'
 
-import { Action } from '@Src/store/globalSettings'
+import { SyncAction } from '@Src/store'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{
@@ -17,7 +17,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function Pwa() {
-  const dispatch = useDispatch<Dispatch<Action>>()
+  const dispatch = useDispatch<Dispatch<SyncAction>>()
   const [isInstalled, setIsInstalled] = useState(true)
   const [isNewVersionInstalled, setIsNewVersionInstalled] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent>()

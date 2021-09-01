@@ -9,14 +9,13 @@ import {
 } from '@ant-design/icons'
 import i18n from 'i18next'
 
-import { State } from '@Src/store'
+import { State, SyncAction } from '@Src/store'
 import { availableLangs, getLangTitle } from '@Src/i18n/datas'
-import { Action } from '@Src/store/globalSettings'
 
 export default function SwitchLang() {
   const [isLoading, setIsLoading] = useState(false)
   const { lang } = useSelector((state: State) => state.globalSettings)
-  const dispatch = useDispatch<Dispatch<Action>>()
+  const dispatch = useDispatch<Dispatch<SyncAction>>()
 
   if (availableLangs.length <= 1) {
     return <Button disabled size='small'>

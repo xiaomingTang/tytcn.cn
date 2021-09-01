@@ -8,13 +8,12 @@ import {
   CaretDownOutlined,
 } from '@ant-design/icons'
 
-import { State } from '@Src/store'
-import { Action } from '@Src/store/globalSettings'
+import { State, SyncAction } from '@Src/store'
 import { TransitionType, availableTransitionTypes } from '@Src/components/Transitions'
 
 export default function SwitchTransitionType() {
   const { transitionType } = useSelector((state: State) => state.globalSettings)
-  const dispatch = useDispatch<Dispatch<Action>>()
+  const dispatch = useDispatch<Dispatch<SyncAction>>()
 
   if (availableTransitionTypes.length <= 1) {
     return <Button disabled size='small'>

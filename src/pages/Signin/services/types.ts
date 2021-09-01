@@ -1,5 +1,5 @@
-import { State as UserState } from '@Src/store/user'
 import { AccountType, CodeType, SigninType } from '@Src/constants'
+import { Types } from '@Src/services'
 
 // 登录
 export interface SigninQuery {
@@ -9,9 +9,9 @@ export interface SigninQuery {
   code: string;
 }
 
-export type SigninRes = UserState
+export type SigninRes = Types.User
 
-export type GetMyselfRes = UserState
+export type GetMyselfRes = Types.User
 
 // 获取验证码
 export interface GetAuthCodeQuery {

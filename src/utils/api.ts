@@ -185,10 +185,13 @@ export function useApiWhen<Args extends unknown[], T, S>(
       setLoading(true)
       return factory(...args)
         .then((res) => {
+          console.log()
           if (pipe) {
             setData(pipe(res))
           } else {
-            setData(data)
+            // 由于 pipe 为空, 此处直接将 res 赋给 setData
+            // @ts-ignore
+            setData(res)
           }
           if (afterUpdate) {
             afterUpdate()

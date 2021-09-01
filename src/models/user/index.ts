@@ -1,8 +1,8 @@
-import { State as UserState } from '@Src/store/user'
+import { Types } from '@Src/services'
 import { Storage, STORAGE_KEY } from '@Src/utils/storage'
 
 interface LocalUsers {
-  [key: string]: UserState;
+  [key: string]: Types.User;
 }
 
 export class UserModel {
@@ -14,14 +14,14 @@ export class UserModel {
     Storage.remove(STORAGE_KEY.USER_MODEL)
   }
 
-  static getLocalUser(id: string): UserState | null {
+  static getLocalUser(id: string): Types.User | null {
     if (!id) {
       return null
     }
     return UserModel.getAllLocalUsers()[id] ?? null
   }
 
-  static setLocalUser(id: string, newUser: UserState | null): void {
+  static setLocalUser(id: string, newUser: Types.User | null): void {
     if (!id) {
       console.error('id is empty')
       return
@@ -48,11 +48,11 @@ export class UserModel {
     Storage.set(STORAGE_KEY.LAST_ONLINE_USER_ID, userId)
   }
 
-  static getLastOnlineUser(): UserState | null {
+  static getLastOnlineUser(): Types.User | null {
     return this.getLocalUser(this.getLastOnlineUserId() ?? '') ?? null
   }
 
-  static signin(user: UserState): UserState {
+  static signin(user: Types.User): Types.User {
     const { id, token } = user
     const { ...userWithoutToken } = user
     // token 置空

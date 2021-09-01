@@ -8,7 +8,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import '@Src/global'
 import { Pwa } from '@Src/global/pwa'
-import store, { State } from '@Src/store/index'
+import store, { State } from '@Src/store'
 
 import { Loading } from '@Src/components/Fallback'
 import { PageContainer } from '@Src/components/PageContainer'
@@ -17,9 +17,7 @@ import { transitionClassNameMap } from '@Src/components/Transitions'
 const Home = React.lazy(() => import(/* webpackChunkName: 'Home' */'@Src/pages/Home'))
 const Signin = React.lazy(() => import(/* webpackChunkName: 'Signin' */'@Src/pages/Signin'))
 const NotFound = React.lazy(() => import(/* webpackChunkName: 'NotFound' */'@Src/pages/NotFound'))
-const GroupChatRoom = React.lazy(() => import(/* webpackChunkName: 'GroupChatRoom' */'@Src/pages/ChatRoom/pages/group'))
-const UserChatRoom = React.lazy(() => import(/* webpackChunkName: 'UserChatRoom' */'@Src/pages/ChatRoom/pages/user'))
-const ChatRoom = React.lazy(() => import(/* webpackChunkName: 'ChatRoom' */'@Src/pages/ChatRoom/pages/index'))
+const ChatRoom = React.lazy(() => import(/* webpackChunkName: 'ChatRoom' */'@Src/pages/ChatRoom'))
 
 function Contents() {
   const location = useLocation()
@@ -35,20 +33,6 @@ function Contents() {
       unmountOnExit
     >
       <Switch location={location}>
-        <Route exact sensitive path='/chatRoom/group/:targetGroupId'>
-          <PageContainer>
-            <Suspense fallback={<Loading />}>
-              <GroupChatRoom />
-            </Suspense>
-          </PageContainer>
-        </Route>
-        <Route exact sensitive path='/chatRoom/user/:targetUserId'>
-          <PageContainer>
-            <Suspense fallback={<Loading />}>
-              <UserChatRoom />
-            </Suspense>
-          </PageContainer>
-        </Route>
         <Route exact sensitive path='/chatRoom'>
           <PageContainer>
             <Suspense fallback={<Loading />}>

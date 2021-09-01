@@ -1,28 +1,11 @@
+import { UserOnlineState } from '@Src/constants'
 import { UserModel } from '@Src/models/user'
+import { Types } from '@Src/services'
 import { ensureImpossibleAction } from './utils'
 
-export enum UserOnlineState {
-  On = 'On',
-  Off = 'Off',
-}
+export type State = Types.User
 
-export interface State {
-  id: string;
-  nickname: string;
-  avatar: string;
-  token: string;
-  phone: string;
-  email: string;
-  onlineState: UserOnlineState;
-  friends: State[];
-  roles: string[];
-  groups: string[];
-  ownGroups: string[];
-  postedMessages: string[];
-  receivedMessages: string[];
-}
-
-export const initState: State = Object.values(UserModel.getAllLocalUsers())[0] || {
+export const initState: State = UserModel.getLastOnlineUser() || {
   id: '',
   nickname: '',
   avatar: '',
