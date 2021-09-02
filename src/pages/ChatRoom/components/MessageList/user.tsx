@@ -1,9 +1,10 @@
-import { Apis, Types } from '@Src/services'
+import { Apis as GlobalApis, Types as GlobalTypes } from '@Src/services'
 import { State } from '@Src/store'
 import { useApi } from '@Src/utils/api'
 import { Avatar } from 'antd'
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
+import { Apis, Types } from '../../services'
 
 import Styles from './index.module.less'
 
@@ -16,20 +17,21 @@ export function UserMessageList({
 }: Props) {
   const user = useSelector((state: State) => state.user)
 
-  const getUserConfig: Types.GetUserQuery = useMemo(() => ({ id: targetId }), [targetId])
-  const getMessageListConfig: Types.SearchMessageQuery = useMemo(() => ({
-    fromUserId: user.id,
-    toUserId: targetId,
+  const getUserConfig: GlobalTypes.GetUserQuery = useMemo(() => ({ id: targetId }), [targetId])
+  const getMessageListConfig: Types.GetMessageListQuery = useMemo(() => ({
     current: 1,
     pageSize: 20,
+    masterId: user.id,
+    targetType: 'user',
+    targetId,
   }), [targetId, user.id])
 
-  const { data: targetUserRes } = useApi(Apis.getUser, {
+  const { data: targetUserRes } = useApi(GlobalApis.getUser, {
     args: [getUserConfig],
     enable: !!targetId,
   })
 
-  const { data: messageListRes } = useApi(Apis.searchMessage, {
+  const { data: messageListRes } = useApi(Apis.getMessageList, {
     args: [getMessageListConfig],
     enable: !!targetId,
   })

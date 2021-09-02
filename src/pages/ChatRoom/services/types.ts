@@ -1,11 +1,20 @@
 import { MessageType } from '@Src/constants'
+import { Message, PageQuery, PageRes } from '@Src/services/types'
 
 export type SendMessageQuery = {
   content: string;
   type: MessageType;
   fromUserId: string;
-  toUserIds: string[];
-  toGroupIds: string[];
+  toUserId: string;
+  toGroupId: string;
 }
 
 export type SendMessageRes = string
+
+export interface GetMessageListQuery extends PageQuery {
+  masterId: string;
+  targetType?: 'user' | 'group';
+  targetId?: string;
+}
+
+export type GetMessageListRes = PageRes<Message>

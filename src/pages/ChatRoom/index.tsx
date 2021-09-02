@@ -42,11 +42,11 @@ function ChatRoom() {
         onSubmit={async (content) => {
           try {
             const result = await Apis.sendMessage({
-              content,
+              content: `你好，${chat.target.name || chat.target.id}，我是${user.nickname}: ${content}`,
               fromUserId: user.id,
               type: MessageType.Text,
-              toUserIds: [],
-              toGroupIds: [],
+              toUserId: chat.target.type === 'user' ? chat.target.id : '',
+              toGroupId: chat.target.type === 'group' ? chat.target.id : '',
             })
             return !!result
           } catch (error) {

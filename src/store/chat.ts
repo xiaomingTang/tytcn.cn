@@ -3,6 +3,7 @@ import { ensureImpossibleAction } from './utils'
 export interface ChatTarget {
   type: 'group' | 'user';
   id: string;
+  name?: string;
 }
 
 export interface State {
@@ -17,13 +18,13 @@ export const initState: State = {
 }
 
 export type Action = {
-  type: '@chat/toggle';
+  type: '@chat/update';
   value: ChatTarget;
 }
 
 export function reducer(state = initState, action: Action): State {
   switch (action.type) {
-    case '@chat/toggle': {
+    case '@chat/update': {
       return {
         ...state,
         target: {

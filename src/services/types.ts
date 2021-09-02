@@ -18,8 +18,8 @@ export interface Message {
   content: string;
   type: MessageType;
   fromUser: User;
-  toUsers: User[];
-  toGroups: Group[];
+  toUser: User;
+  toGroup: Group;
 }
 
 export interface User {

@@ -27,10 +27,11 @@ export function Aside() {
           dataSource={hotUsers?.data}
           renderItem={(item) => (<List.Item className={Styles.userItem} onClick={() => {
             dispatch({
-              type: '@chat/toggle',
+              type: '@chat/update',
               value: {
                 type: 'user',
                 id: item.id,
+                name: item.nickname,
               },
             })
           }}>
@@ -52,10 +53,11 @@ export function Aside() {
           dataSource={hotGroups?.data}
           renderItem={(item) => (<List.Item className={Styles.userItem} onClick={() => {
             dispatch({
-              type: '@chat/toggle',
+              type: '@chat/update',
               value: {
                 type: 'group',
                 id: item.id,
+                name: item.name,
               },
             })
           }}>
