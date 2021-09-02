@@ -1,6 +1,6 @@
 import { Apis, Types } from '@Src/services'
 import { State } from '@Src/store'
-import { useApiWhen } from '@Src/utils/api'
+import { useApi } from '@Src/utils/api'
 import { Avatar } from 'antd'
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -24,23 +24,19 @@ export function UserMessageList({
     pageSize: 20,
   }), [targetId, user.id])
 
-  const { data: targetUser } = useApiWhen(
-    !!targetId,
-    Apis.getUser,
-    [getUserConfig],
-  )
+  const { data: targetUserRes } = useApi(Apis.getUser, {
+    args: [getUserConfig],
+    enable: !!targetId,
+  })
 
-  const { data: messageListRes } = useApiWhen(
-    true,
-    Apis.searchMessage,
-    [getMessageListConfig],
-  )
-
-  console.log(messageListRes)
+  const { data: messageListRes } = useApi(Apis.searchMessage, {
+    args: [getMessageListConfig],
+    enable: !!targetId,
+  })
 
   return <div className={Styles.container}>
     <div className={Styles.title}>
-      {user.nickname} -- {targetUser?.nickname || targetId}
+      {targetUserRes?.nickname || targetId}
     </div>
     {
       messageListRes && <div className={Styles.content}>

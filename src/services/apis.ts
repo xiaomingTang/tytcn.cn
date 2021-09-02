@@ -44,7 +44,6 @@ export async function getMessage(data: Types.GetMessageQuery) {
 }
 
 export async function searchMessage(data: Types.SearchMessageQuery) {
-  console.log(data)
   return http.post<Types.SearchMessageRes>('/message/search', {
     data,
   })

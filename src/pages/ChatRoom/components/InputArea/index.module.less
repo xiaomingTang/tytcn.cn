@@ -1,14 +1,39 @@
 .input-area {
   display: flex;
   align-items: flex-end;
-}
+  margin: 2px 0;
 
-.input-box {
-  flex: auto;
-}
+  .actions {
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: 3em;
+  }
 
-.actions {
-  flex: none;
-  width: 3em;
-  margin-left: .5em;
+  .input-box {
+    resize: none;
+  }
+
+  &.big-screen {
+    padding-top: 10px;
+    flex-direction: column;
+    background-color: #e4e4e4;
+    border-top: 1px solid #e4e4e4;
+    transition: background-color .5s;
+
+    &.focus {
+      background-color: unset;
+    }
+  
+    .actions {
+      margin-top: 5px;
+    }
+  }
+
+  &.mini-screen {
+    flex-direction: row;
+
+    .actions {
+      margin-left: 5px;
+    }
+  }
 }

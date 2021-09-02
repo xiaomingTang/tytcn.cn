@@ -1,6 +1,6 @@
 import { Apis, Types } from '@Src/services'
 import { State } from '@Src/store'
-import { useApiWhen } from '@Src/utils/api'
+import { useApi } from '@Src/utils/api'
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -22,23 +22,19 @@ export function GroupMessageList({
     pageSize: 20,
   }), [targetId])
 
-  const { data: targetGroup } = useApiWhen(
-    !!targetId,
-    Apis.getGroup,
-    [getGroupConfig],
-  )
+  const { data: targetGroup } = useApi(Apis.getGroup, {
+    args: [getGroupConfig],
+    enable: !!targetId,
+  })
 
-  const { data: messageListRes } = useApiWhen(
-    true,
-    Apis.searchMessage,
-    [getMessageListConfig],
-  )
-
-  console.log(messageListRes)
+  const { data: messageListRes } = useApi(Apis.searchMessage, {
+    args: [getMessageListConfig],
+    enable: !!targetId,
+  })
 
   return <div className={Styles.container}>
     <div className={Styles.title}>
-      {user.nickname} -- {targetGroup?.name || targetId}
+      {targetGroup?.name || targetId}
     </div>
     {
       messageListRes && <div className={Styles.content}>

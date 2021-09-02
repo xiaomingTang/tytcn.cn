@@ -1,3 +1,4 @@
+import { ChatTarget } from '@Src/store/chat'
 import React from 'react'
 import { GroupMessageList } from './group'
 
@@ -5,7 +6,7 @@ import Styles from './index.module.less'
 import { UserMessageList } from './user'
 
 interface Props {
-  type: 'user' | 'group';
+  type: ChatTarget['type'];
   targetId?: string;
 }
 

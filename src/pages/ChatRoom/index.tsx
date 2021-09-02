@@ -1,13 +1,18 @@
 import React from 'react'
 import { useRandomSoftColors } from 'xiaoming-hooks'
+import { useSelector } from 'react-redux'
+import { message } from 'antd'
 
-import { availableBackgroundImages } from '@Src/constants'
+import { State } from '@Src/store'
+import { MessageType } from '@Src/constants'
 
 import { ChatRoomLayout } from './components/Layout'
 import { MessageList } from './components/MessageList'
 
 import Styles from './index.module.less'
 import { Aside } from './components/Aside'
+import { InputArea } from './components/InputArea'
+import { Apis } from './services'
 
 function RandomComp({ content }: { content: string }) {
   const [bg, color] = useRandomSoftColors()
@@ -26,13 +31,30 @@ function RandomComp({ content }: { content: string }) {
 }
 
 function ChatRoom() {
-  return <div className={Styles.container} style={{
-    backgroundImage: `url(${availableBackgroundImages[0]})`,
-  }}>
+  const user = useSelector((state: State) => state.user)
+  const chat = useSelector((state: State) => state.chat)
+
+  return <div className={Styles.container}>
     <ChatRoomLayout
       chatList={<RandomComp content={'chatList'} />}
-      messageList={<MessageList type='user' targetId='10387' />}
-      inputArea={<RandomComp content={'inputArea'} />}
+      messageList={<MessageList type={chat.target.type} targetId={chat.target.id} />}
+      inputArea={<InputArea
+        onSubmit={async (content) => {
+          try {
+            const result = await Apis.sendMessage({
+              content,
+              fromUserId: user.id,
+              type: MessageType.Text,
+              toUserIds: [],
+              toGroupIds: [],
+            })
+            return !!result
+          } catch (error) {
+            message.error(error.message)
+            return false
+          }
+        }}
+      />}
       aside={<Aside />}
     />
   </div>

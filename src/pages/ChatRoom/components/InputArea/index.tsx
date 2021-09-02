@@ -1,11 +1,14 @@
 import React, {
-  useState, useRef, useCallback, CSSProperties,
+  useState, useRef, useCallback, CSSProperties, useMemo, useEffect,
 } from 'react'
 import {
   Button, Input,
 } from 'antd'
 import { MailOutlined } from '@ant-design/icons'
+import { useSize } from 'xiaoming-hooks'
+import { TextAreaProps } from 'antd/lib/input'
 
+import { joinSpace } from '@Src/utils/others'
 import { isMobile } from '@Src/utils/device'
 
 import Styles from './index.module.less'
@@ -41,6 +44,28 @@ export function InputArea({
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [isFocused, setIsFocused] = useState(false)
+  const docSize = useSize('DOC_CLIENT_SIZE', 500)
+  const isBigScreen = !isMobile
+  const inputAreaClassName = joinSpace(
+    isBigScreen ? Styles.bigScreen : Styles.miniScreen,
+    isFocused && Styles.focus,
+  )
+
+  const textAreaProps: Pick<TextAreaProps, 'rows' | 'autoSize'> = useMemo(() => {
+    if (isBigScreen) {
+      return {
+        rows: Math.floor(docSize.height / 80),
+      }
+    }
+    return {
+      autoSize: {
+        minRows: 1,
+        maxRows: 8,
+      },
+    }
+  }, [docSize.height, isBigScreen])
+
   const innerOnSubmit = useCallback(() => {
     const input = inputRef.current
     if (input) {
@@ -51,10 +76,11 @@ export function InputArea({
     const promiseResult = result as Promise<boolean>
     if (promiseResult && typeof promiseResult.then === 'function') {
       promiseResult.then((res) => {
-        setLoading(false)
         if (res) {
           setContent('')
         }
+      }).finally(() => {
+        setLoading(false)
       })
     } else {
       setLoading(false)
@@ -76,20 +102,28 @@ export function InputArea({
   }, [innerOnSubmit])
 
   return <div className={className} style={style}>
-    <div className={Styles.inputArea}>
+    <div className={joinSpace(Styles.inputArea, inputAreaClassName)}>
       <Input.TextArea
+        ref={inputRef}
         className={Styles.inputBox}
         value={content}
-        autoFocus
-        ref={inputRef}
+        bordered={!isBigScreen}
         maxLength={500}
-        placeholder={isMobile ? '' : 'ctrl + Enter 快捷发送'}
-        autoSize={{
-          minRows: 1,
-          maxRows: 6,
-        }}
+        placeholder={isMobile ? '输入...' : 'ctrl + Enter 快捷发送'}
         onChange={innerOnChange}
         onPressEnter={onPressEnter}
+        onFocus={() => {
+          setIsFocused(true)
+        }}
+        onBlur={() => {
+          setIsFocused(false)
+        }}
+        // key 的作用是, 当 textAreaProps 更新时更新, 由于当前 isBigScreen 不是响应值, 所以不要也行
+        // 移动端弹出输入法时, 会改变 doc-height/window-height
+        // 所以 key 中不能包含高度信息
+        // 否则输入法弹出, 高度更新, 导致 key 更新, 导致输入法失焦退出, 死循环
+        key={`${isBigScreen}`}
+        {...textAreaProps}
       />
       <Button
         className={Styles.actions}

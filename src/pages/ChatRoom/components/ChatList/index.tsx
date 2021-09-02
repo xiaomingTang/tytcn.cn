@@ -1,16 +1,14 @@
-import { State, SyncAction } from '@Src/store'
+import { State } from '@Src/store'
 import { useApi } from '@Src/utils/api'
 import { List } from 'antd'
 import Avatar from 'antd/lib/avatar/avatar'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Dispatch } from 'redux'
+import { useSelector } from 'react-redux'
 import { Apis } from '../../services'
 import Styles from './index.module.less'
 
-export function Aside() {
+export function ChatList() {
   const user = useSelector((state: State) => state.user)
-  const dispatch = useDispatch<Dispatch<SyncAction>>()
   const { data: hotUsers } = useApi(Apis.getHotUsers, {
     enable: !!user.id,
   })
@@ -25,15 +23,7 @@ export function Aside() {
         <List
           bordered
           dataSource={hotUsers?.data}
-          renderItem={(item) => (<List.Item className={Styles.userItem} onClick={() => {
-            dispatch({
-              type: '@chat/toggle',
-              value: {
-                type: 'user',
-                id: item.id,
-              },
-            })
-          }}>
+          renderItem={(item) => (<List.Item className={Styles.userItem}>
             <List.Item.Meta
               avatar={<Avatar src={item.avatar} />}
               title={<span className={Styles.userItemTitle}>
@@ -50,15 +40,7 @@ export function Aside() {
         <List
           bordered
           dataSource={hotGroups?.data}
-          renderItem={(item) => (<List.Item className={Styles.userItem} onClick={() => {
-            dispatch({
-              type: '@chat/toggle',
-              value: {
-                type: 'group',
-                id: item.id,
-              },
-            })
-          }}>
+          renderItem={(item) => (<List.Item className={Styles.userItem}>
             <List.Item.Meta
               avatar={<Avatar>{item.name}</Avatar>}
               title={<span className={Styles.userItemTitle}>

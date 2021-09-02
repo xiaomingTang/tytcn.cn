@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import {
+  useCallback, useEffect, useMemo, useState,
+} from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
 import { message as antdMessage } from 'antd'
 import { signin } from '@Src/pages/Signin/utils'
@@ -139,45 +141,68 @@ export const http = {
   },
 }
 
-interface Ret<T> {
-  loading: boolean;
-  error: string;
-  data: T | undefined;
-  update: () => Promise<void>;
+interface UseApiOptions<Args extends unknown[], T, S = T> {
+  /**
+   * 是否调用 api
+   */
+  enable?: boolean;
+  /**
+   * api 出错时是否弹出 message.error
+   */
+  toastError?: boolean;
+  /**
+   * 对 api().then 的结果执行管道
+   *
+   * ！！！不在依赖中, 不会响应变化
+   */
+  pipe?: (res: T) => S;
+  /**
+   * api 的参数
+   */
+  args?: Args;
 }
 
-/**
- * - pipe & afterUpdate 不在 useEffect DependencyList 中(变化 **不会** 重新发送请求)
- * - ...args 在 useEffect DependencyList 中(变化 **会** 重新发送请求)
- * @param enable 是否执行 factory
- * @param factory common/utils/api.ts 里面类似的函数
- * @param args factory 的参数
- * @param pipe 对 factory 请求返回值进行处理, 并返回新的值
- * @param afterUpdate factory 请求成功后的回调
- * @returns factory 返回值 经过 pipe 处理后的值
- */
-export function useApiWhen<Args extends unknown[], T>(
-  enable: boolean,
-  factory: (...args: Args) => Promise<T>,
-  args: Args,
-): Ret<T>
-export function useApiWhen<Args extends unknown[], T, S>(
-  enable: boolean,
-  factory: (...args: Args) => Promise<T>,
-  args: Args,
-  pipe: (res: T) => S,
-  afterUpdate?: () => void,
-): Ret<S>
-export function useApiWhen<Args extends unknown[], T, S>(
-  enable: boolean,
-  factory: (...args: Args) => Promise<T>,
-  args: Args,
-  pipe?: (res: T) => S,
-  afterUpdate?: () => void,
-) {
+interface UseApiReturnType<T> {
+  loading: boolean;
+  /**
+   * api 报错消息
+   */
+  error: string;
+  data: T | undefined;
+  /**
+   * 强制重新执行 api
+   */
+  update: () => Promise<T>;
+}
+
+function decodeOptions<Args extends unknown[], T>(options?: UseApiOptions<Args, T, T>): Required<UseApiOptions<Args, T, T>>
+function decodeOptions<Args extends unknown[], T, S>(options?: UseApiOptions<Args, T, S>): Required<UseApiOptions<Args, T, S>>
+function decodeOptions<Args extends unknown[], T, S = T>(options?: UseApiOptions<Args, T, S>) {
+  const {
+    enable = true,
+    toastError = true,
+    args = [],
+    pipe = (res: T) => res,
+  } = options || {}
+
+  return {
+    enable,
+    toastError,
+    pipe,
+    args,
+  }
+}
+
+export function useApi<Args extends unknown[], T>(factory: (...args: Args) => Promise<T>, options?: UseApiOptions<Args, T>): UseApiReturnType<T>
+export function useApi<Args extends unknown[], T, S>(factory: (...args: Args) => Promise<T>, options?: UseApiOptions<Args, T, S>): UseApiReturnType<S>
+export function useApi<Args extends unknown[], T, S = T>(factory: (...args: Args) => Promise<T>, options?: UseApiOptions<Args, T, S>): UseApiReturnType<S> {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [data, setData] = useState<S | undefined>()
+
+  const {
+    enable, toastError, pipe, args,
+  } = useMemo(() => decodeOptions(options), [options])
 
   const update = useCallback(() => {
     if (enable && factory) {
@@ -185,23 +210,16 @@ export function useApiWhen<Args extends unknown[], T, S>(
       setLoading(true)
       return factory(...args)
         .then((res) => {
-          console.log()
-          if (pipe) {
-            setData(pipe(res))
-          } else {
-            // 由于 pipe 为空, 此处直接将 res 赋给 setData
-            // @ts-ignore
-            setData(res)
-          }
-          if (afterUpdate) {
-            afterUpdate()
-          }
+          const piped = pipe(res)
+          setData(piped)
+          return piped
         })
         .finally(() => {
           setLoading(false)
         })
         .catch((err) => {
           setError((err as Error)?.message || '请稍后再试')
+          throw err
         })
     }
     return Promise.reject(new Error('disabled'))
@@ -213,6 +231,12 @@ export function useApiWhen<Args extends unknown[], T, S>(
   useEffect(() => {
     update()
   }, [update])
+
+  useEffect(() => {
+    if (toastError && error) {
+      antdMessage.error(error)
+    }
+  }, [error, toastError])
 
   return {
     loading,
