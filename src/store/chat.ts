@@ -24,7 +24,6 @@ export type Action = {
 export function reducer(state = initState, action: Action): State {
   switch (action.type) {
     case '@chat/toggle': {
-      console.log({ ...action.value })
       return {
         ...state,
         target: {
