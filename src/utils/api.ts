@@ -229,7 +229,9 @@ export function useApi<Args extends unknown[], T, S = T>(factory: (...args: Args
   }, [enable, factory, ...args])
 
   useEffect(() => {
-    update()
+    update().catch((err) => {
+      // pass
+    })
   }, [update])
 
   useEffect(() => {

@@ -209,7 +209,7 @@ export function SigninBox({
               required
               rules={authCodeRules}
             >
-              <Input allowClear placeholder='验证码(4 位)' />
+              <Input allowClear placeholder='验证码(4 位)' autoComplete='off' />
             </Form.Item>
             <Tooltip
               trigger='click'
