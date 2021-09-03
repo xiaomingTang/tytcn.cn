@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { message } from 'antd'
 
 import { availableBackgroundImages } from '@Src/constants'
 
+import { Apis } from './services'
 import { SigninBox } from './components/SigninBox'
 
 import Styles from './index.module.less'
@@ -17,6 +18,14 @@ function onSuccess() {
 }
 
 function Signin() {
+  useEffect(() => {
+    Apis.getMyself().then((res) => {
+      if (res) {
+        onSuccess()
+      }
+    })
+  }, [])
+
   return <div className={Styles.container} style={{
     backgroundImage: `url(${availableBackgroundImages[0]})`,
   }}>

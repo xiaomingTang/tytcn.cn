@@ -4,7 +4,7 @@ import {
 } from 'antd'
 import { isEmail } from 'class-validator'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { useTimer } from 'xiaoming-hooks'
+import { sleep, useTimer } from 'xiaoming-hooks'
 import { SearchOutlined } from '@ant-design/icons'
 
 import { UserModel } from '@Src/models/user'
@@ -34,16 +34,6 @@ export function SigninBox({
   className = '',
   style,
 }: SigninBoxProps) {
-  useEffect(() => {
-    Apis.getMyself().then((res) => {
-      if (res && onSuccess) {
-        onSuccess(res)
-      }
-    })
-  // onSuccess 不加入 deps, 防止失误传入频繁变动的 onSuccess 时, 导致该 api 被频繁调用
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const [passwordForm] = Form.useForm()
   const [authCodeForm] = Form.useForm()
   const [isFetchingAuthCode, setIsFetchingAuthCode] = useState(false)
@@ -63,6 +53,11 @@ export function SigninBox({
 
   const onFetchAuthCode = useCallback(async (account = '') => {
     try {
+      // Input.Search allowClear 点击清除按钮时
+      // 1. 触发 onSearch 事件, 此时入参是已被清除的最新变量, 是空字符串
+      // 2. 表单不是响应式的, 而是异步更新的, 此时表单中的 account 字段仍然存在, 所以能通过 validateFields
+      // 所以添加一个延时, 让表单的值更新为最新值, 之后再验证
+      await sleep(100)
       await authCodeForm.validateFields(['account'])
     } catch (error) {
       return

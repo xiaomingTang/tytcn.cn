@@ -2,7 +2,7 @@ import { Types as GlobalTypes } from '@Src/services'
 import { State, SyncAction } from '@Src/store'
 import { ChatTarget } from '@Src/store/chat'
 import { useApi } from '@Src/utils/api'
-import { List } from 'antd'
+import { List, Typography } from 'antd'
 import Avatar from 'antd/lib/avatar/avatar'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,7 +24,7 @@ function UserChat(message: GlobalTypes.Message) {
     type: 'user',
     name: target.nickname,
   }
-  return <List.Item onClick={() => {
+  return <List.Item className={Styles.item} onClick={() => {
     dispatch({
       type: '@chat/update',
       value: chatTarget,
@@ -33,7 +33,12 @@ function UserChat(message: GlobalTypes.Message) {
     <List.Item.Meta
       avatar={<Avatar src={target.avatar} />}
       title={target.nickname}
-      description={message.content}
+      description={<Typography.Text
+        ellipsis
+        className={Styles.desc}
+      >
+        {message.content}
+      </Typography.Text>}
     />
   </List.Item>
 }
@@ -45,7 +50,7 @@ function GroupChat(message: GlobalTypes.Message) {
     type: 'group',
     name: message.toGroup.name,
   }
-  return <List.Item onClick={() => {
+  return <List.Item className={Styles.item} onClick={() => {
     dispatch({
       type: '@chat/update',
       value: chatTarget,
@@ -54,14 +59,17 @@ function GroupChat(message: GlobalTypes.Message) {
     <List.Item.Meta
       avatar={<Avatar src={message.fromUser.avatar} />}
       title={message.toGroup.name}
-      description={message.content}
+      description={<Typography.Text
+        ellipsis
+        className={Styles.desc}
+      >
+        {message.content}
+      </Typography.Text>}
     />
   </List.Item>
 }
 
 export function ChatList({ id }: Props) {
-  const user = useSelector((state: State) => state.user)
-  const dispatch = useDispatch<Dispatch<SyncAction>>()
   const { data: messageList } = useApi(Apis.getChatList, {
     enable: !!id,
     args: [id],

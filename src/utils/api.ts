@@ -236,7 +236,10 @@ export function useApi<Args extends unknown[], T, S = T>(factory: (...args: Args
 
   useEffect(() => {
     if (toastError && error) {
-      antdMessage.error(error)
+      antdMessage.error({
+        content: error,
+        key: error,
+      })
     }
   }, [error, toastError])
 

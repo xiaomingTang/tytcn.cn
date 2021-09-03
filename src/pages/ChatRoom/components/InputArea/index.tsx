@@ -104,6 +104,7 @@ export function InputArea({
   return <div className={className} style={style}>
     <div className={joinSpace(Styles.inputArea, inputAreaClassName)}>
       <Input.TextArea
+        size={isBigScreen ? 'middle' : 'large'}
         ref={inputRef}
         className={Styles.inputBox}
         value={content}
@@ -127,6 +128,7 @@ export function InputArea({
       />
       <Button
         className={Styles.actions}
+        size={isBigScreen ? 'middle' : 'large'}
         type='primary'
         loading={loading}
         disabled={!content || loading}

@@ -14,14 +14,14 @@
   }
 
   &.big-screen {
-    padding-top: 10px;
     flex-direction: column;
     background-color: #e4e4e4;
-    border-top: 1px solid #e4e4e4;
+    border-top: 1px solid transparent;
     transition: background-color .5s;
 
     &.focus {
-      background-color: unset;
+      border-top-color: #e4e4e4;
+      background-color: inherit;
     }
   
     .actions {

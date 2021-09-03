@@ -1,51 +1,13 @@
-@bg-base: #e4e4e4;
-@bg-title: #8c5252;
-
-.container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: @bg-base;
-}
-
-.hot-users,
-.hot-groups {
-  height: 50vh;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  .title {
-    flex: 0;
-    flex-basis: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: @bg-title;
-    color: white;
-  }
-
-  .content {
-    flex: 1;
-    overflow: auto;
-  }
-}
-
-.user-item-title,
-.group-item-title {
-  display: inline-block;
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.user-item,
-.group-item {
+.item {
   cursor: default;
   background-color: #d4d4d4;
   &:hover {
     background-color: #bfbfbf;
   }
+}
+
+.desc {
+  width: 100%;
+  color: inherit;
+  font-size: .8em;
 }

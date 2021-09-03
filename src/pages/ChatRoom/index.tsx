@@ -1,5 +1,4 @@
-import React from 'react'
-import { useRandomSoftColors } from 'xiaoming-hooks'
+import React, { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { message } from 'antd'
 
@@ -15,47 +14,31 @@ import { InputArea } from './components/InputArea'
 import { Apis } from './services'
 import { ChatList } from './components/ChatList'
 
-function RandomComp({ content }: { content: string }) {
-  const [bg, color] = useRandomSoftColors()
-
-  return <div style={{
-    width: '100%',
-    height: '100%',
-    padding: '1em',
-    fontSize: '2em',
-    pointerEvents: 'none',
-    backgroundColor: bg,
-    color,
-  }}>
-    {content}
-  </div>
-}
-
 function ChatRoom() {
   const user = useSelector((state: State) => state.user)
   const chat = useSelector((state: State) => state.chat)
 
+  const onSendMessage = useCallback(async (content: string) => {
+    try {
+      const result = await Apis.sendMessage({
+        content: `你好，${chat.target.name || chat.target.id}，我是${user.nickname}: ${content}`,
+        fromUserId: user.id,
+        type: MessageType.Text,
+        toUserId: chat.target.type === 'user' ? chat.target.id : '',
+        toGroupId: chat.target.type === 'group' ? chat.target.id : '',
+      })
+      return !!result
+    } catch (error) {
+      message.error(error.message)
+      return false
+    }
+  }, [chat.target.id, chat.target.name, chat.target.type, user.id, user.nickname])
+
   return <div className={Styles.container}>
     <ChatRoomLayout
       chatList={<ChatList id={user.id} />}
-      messageList={<MessageList type={chat.target.type} targetId={chat.target.id} />}
-      inputArea={<InputArea
-        onSubmit={async (content) => {
-          try {
-            const result = await Apis.sendMessage({
-              content: `你好，${chat.target.name || chat.target.id}，我是${user.nickname}: ${content}`,
-              fromUserId: user.id,
-              type: MessageType.Text,
-              toUserId: chat.target.type === 'user' ? chat.target.id : '',
-              toGroupId: chat.target.type === 'group' ? chat.target.id : '',
-            })
-            return !!result
-          } catch (error) {
-            message.error(error.message)
-            return false
-          }
-        }}
-      />}
+      messageList={<MessageList {...chat.target} />}
+      inputArea={<InputArea onSubmit={onSendMessage} />}
       aside={<Aside />}
     />
   </div>

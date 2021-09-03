@@ -5,16 +5,22 @@ import thunk, { ThunkAction, ThunkDispatch } from 'redux-thunk'
 // import logger from 'redux-logger'
 
 import {
+  initState as chatInitState,
+  reducer as chatReducer,
+  Action as ChatAction,
+} from './chat'
+
+import {
   initState as globalSettingsInitState,
   reducer as globalSettingsReducer,
   Action as GlobalSettingsAction,
 } from './globalSettings'
 
 import {
-  initState as chatInitState,
-  reducer as chatReducer,
-  Action as ChatAction,
-} from './chat'
+  initState as layoutInitState,
+  reducer as layoutReducer,
+  Action as LayoutAction,
+} from './layout'
 
 import {
   initState as userInitState,
@@ -23,16 +29,18 @@ import {
 } from './user'
 
 const initState = {
-  globalSettings: globalSettingsInitState,
   chat: chatInitState,
+  globalSettings: globalSettingsInitState,
+  layout: layoutInitState,
   user: userInitState,
 }
 export type State = typeof initState
 
 const reducer = combineReducers({
-  globalSettings: globalSettingsReducer,
-  user: userReducer,
   chat: chatReducer,
+  globalSettings: globalSettingsReducer,
+  layout: layoutReducer,
+  user: userReducer,
 })
 
 const store = createStore(reducer, initState, applyMiddleware(
@@ -40,7 +48,7 @@ const store = createStore(reducer, initState, applyMiddleware(
   // logger,
 ))
 
-export type SyncAction = GlobalSettingsAction | UserAction | ChatAction
+export type SyncAction = GlobalSettingsAction | UserAction | ChatAction | LayoutAction
 export type AsyncAction<R> = ThunkAction<Promise<R>, State, null, SyncAction>
 
 export type MixedDispatch = ThunkDispatch<State, null, SyncAction>

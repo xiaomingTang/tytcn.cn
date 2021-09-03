@@ -1,4 +1,9 @@
-import React from 'react'
+import { State, SyncAction } from '@Src/store'
+import { joinSpace } from '@Src/utils/others'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Dispatch } from 'redux'
+import { useSize } from 'xiaoming-hooks'
 
 import Styles from './index.module.less'
 
@@ -12,8 +17,22 @@ interface Props {
 export function ChatRoomLayout({
   chatList, messageList, inputArea, aside,
 }: Props) {
+  const { chatListVisible, asideVisible } = useSelector((state: State) => state.layout)
+  const dispatch = useDispatch<Dispatch<SyncAction>>()
+  const docSize = useSize()
+
+  useEffect(() => {
+    dispatch({
+      type: '@layout/update',
+      value: {
+        chatListVisible: docSize.width >= 700,
+        asideVisible: docSize.width >= 900,
+      },
+    })
+  }, [dispatch, docSize.width])
+
   return <div className={Styles.container}>
-    <div className={Styles.chatList}>
+    <div className={joinSpace(Styles.chatList, !chatListVisible && Styles.hidden)}>
       {chatList}
     </div>
     <div className={Styles.main}>
@@ -24,7 +43,7 @@ export function ChatRoomLayout({
         {inputArea}
       </div>
     </div>
-    <div className={Styles.aside}>
+    <div className={joinSpace(Styles.aside, !asideVisible && Styles.hidden)}>
       {aside}
     </div>
   </div>

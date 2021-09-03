@@ -2,6 +2,7 @@
   display: flex;
   width: 100%;
   height: 100%;
+  background-color: #e4e4e4;
 }
 
 .chat-list {
@@ -9,18 +10,17 @@
   overflow: hidden;
   transition: flex-basis .3s;
   flex-basis: 200px;
-}
 
-@media (max-width: 700px) {
-  .chat-list {
+  &.hidden {
     flex-basis: 0;
-  }  
+  }
 }
 
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: #f5f5f5;
 }
 
 .message-list {
@@ -33,27 +33,13 @@
   transition: flex-basis .3s;
 }
 
-@media (max-width: 500px) {
-  .input-area {
-    // flex-basis: 200px;
-  }
-}
-
-@media (max-height: 500px) {
-  .input-area {
-    // flex-basis: 150px;
-  }
-}
-
 .aside {
   flex: 0;
   overflow: hidden;
   transition: flex-basis .3s;
   flex-basis: 200px;
-}
 
-@media (max-width: 900px) {
-  .aside {
+  &.hidden {
     flex-basis: 0;
-  }  
+  }
 }

@@ -17,13 +17,29 @@
 }
 
 .title {
+  position: relative;
   flex: 0;
   flex-basis: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.2em;
+  line-height: 40px;
+  text-align: center;
   background-color: #eeeeee;
+}
+
+.chat-name {
+  font-size: 1.2em;
+}
+
+.layout-trigger {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  &.left {
+    left: 1em;
+  }
+  &.right {
+    right: 1em;
+  }
 }
 
 .content {
