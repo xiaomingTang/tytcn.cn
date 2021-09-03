@@ -50,8 +50,7 @@ export function MessageList(chat: ChatTarget) {
         />
       }
       <span className={Styles.chatRoot}>
-        {chat.type === 'user' ? <UserOutlined /> : <TeamOutlined />}
-        {chat.name || chat.id}
+        {chat.type === 'user' ? <UserOutlined /> : <TeamOutlined />} {chat.name || chat.id}
       </span>
       {
         !asideVisible && <Button
