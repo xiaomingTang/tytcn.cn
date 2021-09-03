@@ -13,6 +13,7 @@ import Styles from './index.module.less'
 import { Aside } from './components/Aside'
 import { InputArea } from './components/InputArea'
 import { Apis } from './services'
+import { ChatList } from './components/ChatList'
 
 function RandomComp({ content }: { content: string }) {
   const [bg, color] = useRandomSoftColors()
@@ -36,7 +37,7 @@ function ChatRoom() {
 
   return <div className={Styles.container}>
     <ChatRoomLayout
-      chatList={<RandomComp content={'chatList'} />}
+      chatList={<ChatList id={user.id} />}
       messageList={<MessageList type={chat.target.type} targetId={chat.target.id} />}
       inputArea={<InputArea
         onSubmit={async (content) => {

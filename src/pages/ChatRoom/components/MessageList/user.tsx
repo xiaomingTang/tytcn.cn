@@ -1,6 +1,7 @@
 import { Apis as GlobalApis, Types as GlobalTypes } from '@Src/services'
 import { State } from '@Src/store'
 import { useApi } from '@Src/utils/api'
+import { joinSpace } from '@Src/utils/others'
 import { Avatar } from 'antd'
 import React, { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -24,6 +25,9 @@ export function UserMessageList({
     masterId: user.id,
     targetType: 'user',
     targetId,
+    order: {
+      createdTime: 'ASC',
+    },
   }), [targetId, user.id])
 
   const { data: targetUserRes } = useApi(GlobalApis.getUser, {
@@ -42,10 +46,7 @@ export function UserMessageList({
     </div>
     {
       messageListRes && <div className={Styles.content}>
-        current: {messageListRes.current} <br />
-        total: {messageListRes.total} <br />
-        pageSize: {messageListRes.pageSize} <br />
-        {messageListRes.data.map((item) => (<p key={item.id}>
+        {messageListRes.data.map((item) => (<p key={item.id} className={joinSpace(Styles.messageItem, item.fromUser.id !== user.id && Styles.customer)}>
           <Avatar src={item.fromUser.avatar} />
           {item.fromUser.nickname}: - {item.content}
         </p>))}

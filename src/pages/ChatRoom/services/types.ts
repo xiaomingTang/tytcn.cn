@@ -18,3 +18,7 @@ export interface GetMessageListQuery extends PageQuery {
 }
 
 export type GetMessageListRes = PageRes<Message>
+
+export type GetChatListQuery = string
+
+export type GetChatListRes = Message[]

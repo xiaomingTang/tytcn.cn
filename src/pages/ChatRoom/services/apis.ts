@@ -22,3 +22,7 @@ export async function getMessageList(data: Types.GetMessageListQuery) {
     data,
   })
 }
+
+export async function getChatList(userId: Types.GetChatListQuery) {
+  return http.get<Types.GetChatListRes>(`/message/chat-list/${userId}`)
+}
