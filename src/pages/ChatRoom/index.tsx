@@ -38,6 +38,8 @@ function ChatRoom() {
     <ChatRoomLayout
       chatList={<ChatList id={user.id} />}
       messageList={<MessageList {...chat.target} />}
+      // @TODO: inputArea 放到 MessageList 里面
+      // @TODO: 移动端在输入时, 将 InputArea position 设为 fixed
       inputArea={<InputArea onSubmit={onSendMessage} />}
       aside={<Aside />}
     />

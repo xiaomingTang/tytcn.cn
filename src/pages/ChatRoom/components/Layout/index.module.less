@@ -10,6 +10,8 @@
   overflow: hidden;
   transition: flex-basis .3s;
   flex-basis: 200px;
+  // fix: 修复 ChatList 组件不能 overflow 的 bug
+  overflow: auto;
 
   &.hidden {
     flex-basis: 0;
@@ -25,6 +27,8 @@
 
 .message-list {
   flex: 1;
+  // fix: 修复 MessageList 组件内部 .content 不能 overflow 的 bug
+  overflow: auto;
 }
 
 .input-area {
