@@ -5,6 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { message as antdMessage } from 'antd'
 import { signin } from '@Src/pages/Signin/utils'
 import { Storage } from './storage'
+import './ws'
 
 export const cancelSource = axios.CancelToken.source()
 
@@ -58,7 +59,7 @@ type CustomAxiosRequestConfig = AxiosRequestConfig & {
 export const http = {
   request<T = any>({
     customConfig = {}, ...config
-  }: CustomAxiosRequestConfig) {
+  }: CustomAxiosRequestConfig): Promise<T> {
     // 默认跳转登录
     const { signinOn401 = true } = customConfig
     return axiosInstance.request<TResponse<T>>(config).then((res) => {
@@ -74,7 +75,10 @@ export const http = {
         case 401: {
           message = '请登录后操作'
           if (signinOn401) {
-            signin('modal')
+            return signin('modal').then(() => http.request({
+              customConfig,
+              ...config,
+            }))
           }
           break
         }

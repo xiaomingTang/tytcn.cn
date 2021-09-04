@@ -25,8 +25,8 @@ export function ChatRoomLayout({
     dispatch({
       type: '@layout/update',
       value: {
-        chatListVisible: docSize.width >= 700,
-        asideVisible: docSize.width >= 900,
+        chatListVisible: docSize.width >= 600,
+        asideVisible: docSize.width >= 800,
       },
     })
   }, [dispatch, docSize.width])
