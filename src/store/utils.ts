@@ -2,6 +2,10 @@ interface Action {
   type: string;
 }
 
+/**
+ * 当只有一个 case 时, ts 不能将 action 正确识别为 never,
+ * 需要 action as never 手动将 action 标记为 never
+ */
 export function ensureImpossibleAction(actionTypePrefix: string, action: never) {
   // redux 初始化会执行到这儿
   if (action && (action as Action).type.startsWith(actionTypePrefix)) {

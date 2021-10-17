@@ -24,8 +24,7 @@ export function reducer(state = initState, action: Action): State {
       }
     }
     default: {
-      // @ts-ignore
-      ensureImpossibleAction('@layout/update', action)
+      ensureImpossibleAction('@layout/', action as never)
       return state
     }
   }
