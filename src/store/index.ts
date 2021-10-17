@@ -48,9 +48,49 @@ const store = createStore(reducer, initState, applyMiddleware(
   // logger,
 ))
 
+/**
+ * ``` typescript
+ * // for example
+ * import { useDispatch } from 'react-redux'
+ * import { Dispatch } from 'redux'
+ * import { SyncAction } from 'path/to/the/store'
+ *
+ * const dispatch = useDispatch<Dispatch<SyncAction>>()
+ * ```
+ */
 export type SyncAction = GlobalSettingsAction | UserAction | ChatAction | LayoutAction
+
+/**
+ * ``` typescript
+ * // for example
+ * import { AsyncAction } from 'path/to/the/store'
+ *
+ * const asyncAction: AsyncAction<string> = async (dispatch) => {
+ *   await sleep(1000)
+ *   dispatch({
+ *     type: 'some-sync-action',
+ *   })
+ *   return ''
+ * }
+ * ```
+ */
 export type AsyncAction<R> = ThunkAction<Promise<R>, State, null, SyncAction>
 
+/**
+ * ``` typescript
+ * // for example
+ * import { Dispatch } from 'redux'
+ * import { useDispatch } from 'react-redux'
+ * import { MixedDispatch, AsyncAction } from 'path/to/the/store'
+ *
+ * function Component() {
+ *   const dispatch = useDispatch<MixedDispatch>()
+ *   // you can define asyncAction in reducer or wherever you like
+ *   const asyncAction: AsyncAction<any> = // ...
+ *   const result = await dispatch(asyncAction)
+ * }
+ * ```
+ */
 export type MixedDispatch = ThunkDispatch<State, null, SyncAction>
 
 export default store
