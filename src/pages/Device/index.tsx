@@ -1,15 +1,16 @@
 /* eslint-disable no-param-reassign */
 import React, {
-  useContext, useEffect, useMemo, useState,
+  useContext, useEffect, useMemo, useRef, useState,
 } from "react"
 import * as THREE from "three"
 import {
-  Canvas, ContainerProps,
+  Canvas, ContainerProps, useFrame, useThree,
 } from "react-three-fiber"
 import FPSStats from "react-fps-stats"
 import { ProgressProvider, RawProgressContext } from "ease-progress"
 import { useDeviceOrientation } from "xiaoming-hooks"
 
+import "@Src/components/ThreeTsx"
 import { useOrbitControl } from "@Src/utils/useOrbitControl"
 import { CatchableSuspense } from "@Src/components/CatchableSuspense"
 import { EnvMap } from "@Src/components/EnvMap"
@@ -17,8 +18,10 @@ import { SimulateClick } from "@Src/components/SimulateEvents"
 import { GLTFAssets } from "@Src/components/loaders/GLTFAssets"
 import { moveObjectTo, scaleObjectTo } from "@Src/utils/threeUtils"
 import { Loading } from "@Src/components/Fallback"
+import { Continent } from "@Src/components/Continent"
+import { MapControls } from "@react-three/drei"
 
-const MODEL_SIZE = 150
+const MODEL_SIZE = 10
 
 const canvasConfig: Omit<ContainerProps, "children"> = {
   shadowMap: false,
@@ -26,18 +29,26 @@ const canvasConfig: Omit<ContainerProps, "children"> = {
     antialias: true,
   },
   colorManagement: true,
+  orthographic: true,
   camera: {
     // 相机的默认位置是 (0, 0, 5), lookAt (0, 0, 0)
-    position: [0, MODEL_SIZE * 0.7, MODEL_SIZE * 0.7],
-    fov: 90,
+    position: [
+      0,
+      2 / Math.sqrt(3),
+      // 0,
+      Math.sqrt(3),
+    ].map((i) => i * MODEL_SIZE * 0.5) as [number, number, number],
+    zoom: 50,
     left: -MODEL_SIZE,
     right: MODEL_SIZE,
-    near: 1,
+    top: MODEL_SIZE,
+    bottom: -MODEL_SIZE,
+    near: -MODEL_SIZE * 5,
     far: MODEL_SIZE * 5,
   },
   onCreated: ({ scene }) => {
     scene.background = new THREE.Color(0xcccccc)
-    scene.fog = new THREE.Fog(0xcccccc, MODEL_SIZE * 2, MODEL_SIZE * 4)
+    // scene.fog = new THREE.Fog(0xcccccc, MODEL_SIZE * 2, MODEL_SIZE * 4)
   },
 }
 
@@ -61,7 +72,7 @@ function Delay<T>({ ms, children }: { ms: number; children: T }): T | null {
 function Envs() {
   return <>
     <axesHelper args={[MODEL_SIZE * 1.5]} />
-    {/* <gridHelper args={[MODEL_SIZE * 1.5, 10, "red", "blue"]} /> */}
+    <gridHelper args={[MODEL_SIZE * 1.5, MODEL_SIZE * 1.5, "red", "blue"]} />
 
     <CatchableSuspense>
       <EnvMap url="static/images/box.jpg" />
@@ -77,13 +88,25 @@ function Envs() {
     </CatchableSuspense>
 
     <ambientLight
-      args={["white", 0.4]}
+      args={["white", 0.1]}
     />
+
+    {/* <directionalLight
+      args={["blue", 0.2]}
+      position={[10, 10, 10]}
+    />
+
+    <pointLight
+      args={[
+        "green",
+      ]}
+      position={[-10, 10, -10]}
+    /> */}
   </>
 }
 
 function Scene() {
-  const { setTargetMap } = useOrbitControl()
+  // const { setTargetMap } = useOrbitControl()
   const { setProgressState } = useContext(RawProgressContext)
   const modelInfo = useMemo(() => ({
     url: "static/models/Apple.glb",
@@ -130,37 +153,54 @@ function Scene() {
 
   return <>
     <Envs />
-    <CatchableSuspense>
-      <SimulateClick alwaysSimulate={true}>
-        <GLTFAssets
-          url={modelInfo.url}
-          key={modelInfo.url}
-          shadow={true}
-          activeAnimationIndex={3}
-          ref={(obj) => {
-            if (obj) {
-              setModel(obj)
-            }
-          }}
-          onProgress={(e) => {
-            setProgressState({
-              [modelInfo.url]: {
-                loaded: e.loaded,
-                total: e.total,
-              },
-            })
-          }}
-          onClick={(e) => {
-            e.stopPropagation()
-            const target = new THREE.Box3().setFromObject(e.object).getCenter(new THREE.Vector3())
-            setTargetMap({
-              tween: true,
-              target,
-            })
-          }}
-        />
-      </SimulateClick>
-    </CatchableSuspense>
+    <>
+      {
+      /*
+      <CatchableSuspense>
+        <SimulateClick alwaysSimulate={true}>
+          <GLTFAssets
+            url={modelInfo.url}
+            key={modelInfo.url}
+            shadow={true}
+            activeAnimationIndex={3}
+            ref={(obj) => {
+              if (obj) {
+                setModel(obj)
+              }
+            }}
+            onProgress={(e) => {
+              setProgressState({
+                [modelInfo.url]: {
+                  loaded: e.loaded,
+                  total: e.total,
+                },
+              })
+            }}
+            onClick={(e) => {
+              e.stopPropagation()
+              const target = new THREE.Box3().setFromObject(e.object).getCenter(new THREE.Vector3())
+              setTargetMap({
+                tween: true,
+                target,
+              })
+            }}
+          />
+        </SimulateClick>
+      </CatchableSuspense>
+      */
+      }
+    </>
+    <MapControls
+      enableDamping={false}
+      enableRotate={!("ontouchstart" in document.documentElement)}
+      // minPolarAngle={Math.PI / 3}
+      // maxPolarAngle={Math.PI / 3}
+      // minAzimuthAngle={Math.PI / 6}
+      // maxAzimuthAngle={Math.PI / 6}
+    />
+    <SimulateClick alwaysSimulate>
+      <Continent />
+    </SimulateClick>
   </>
 }
 
@@ -183,6 +223,17 @@ function RawDevice() {
     {loaded < total && <Loading
       text={`${(loaded / 1024 / 1024).toFixed(1)}MB / ${(total / 1024 / 1024).toFixed(1)}MB`}
     />}
+    <div style={{
+      position: "fixed",
+      bottom: "64px",
+      left: "50%",
+      width: "64px",
+      height: "64px",
+      transform: "translateX(-50%)",
+      backgroundColor: "rgba(0, 0, 0, .5)",
+      zIndex: 100,
+      pointerEvents: "none",
+    }}></div>
   </>
 }
 
