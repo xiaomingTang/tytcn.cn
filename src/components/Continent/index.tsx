@@ -1,4 +1,5 @@
 import React, {
+  useContext,
   useEffect,
   useRef, useState,
 } from "react"
@@ -31,8 +32,8 @@ type Land = {
   };
 };
 
-const WIDTH = 50
-const HEIGHT = 50
+const WIDTH = 30
+const HEIGHT = 30
 const CENTER = [2, 1] as [number, number]
 
 const COLOR_MAP: {
@@ -42,6 +43,8 @@ const COLOR_MAP: {
   occupied: 0xffc069,
   tradable: 0x1890ff,
 }
+const HOVER_COLOR = 0xf78397
+const ACTIVE_COLOR = 0x9716e7
 const CONTINENT_BACKGROUND_COLOR = 0x999999
 
 interface MapOptions {
@@ -219,6 +222,13 @@ function Text({ text, sprite = true }: { text: string; sprite?: boolean }) {
   // />
 }
 
+const clickedCoords = React.createContext<[[number, number] | null, React.Dispatch<React.SetStateAction<[number, number] | null>>]>([
+  null,
+  () => {
+    // pass
+  },
+])
+
 function LandItem({
   continentCenter,
   coords,
@@ -230,9 +240,12 @@ function LandItem({
 }) {
   const height = 0
   const eps = 0.1
-  const gap = 0.04
+  const gap = 0.06
   const [x, z] = coords
   const [isHover, setIsHover] = useState(false)
+  const showTextOnHover = false
+  const ref = useRef<THREE.Object3D>()
+  const [, setClickedCoords] = useContext(clickedCoords)
 
   return <>
     <group
@@ -244,8 +257,10 @@ function LandItem({
       rotation={[-Math.PI / 2, 0, 0]}
     >
       <mesh
-        onClick={(e) => {
-          console.log(e)
+        onClick={() => {
+          if (ref.current && land.status !== "disabled") {
+            setClickedCoords(coords)
+          }
         }}
         onPointerOver={() => {
           setIsHover(true)
@@ -253,6 +268,7 @@ function LandItem({
         onPointerOut={() => {
           setIsHover(false)
         }}
+        ref={ref}
       >
         {/* <cylinderGeometry args={[Math.sqrt(3) / 3, Math.sqrt(3) / 3, height, 6]} /> */}
         <shapeGeometry args={[geneHexagon({ radius: SQRT3 / 3 - gap / 2, direction: "v" })]} />
@@ -261,7 +277,7 @@ function LandItem({
         />
       </mesh>
       {
-        isHover && land.status !== "disabled" && <CatchableSuspense>
+        showTextOnHover && isHover && land.status !== "disabled" && <CatchableSuspense>
           <mesh
             position={[0, 0, 0.1]}
           >
@@ -283,12 +299,56 @@ function LandItem({
           </mesh>
         </CatchableSuspense>
       }
+      {
+        !showTextOnHover && isHover && land.status !== "disabled" && <mesh renderOrder={1}>
+          {/* <cylinderGeometry args={[Math.sqrt(3) / 3, Math.sqrt(3) / 3, height, 6]} /> */}
+          <shapeGeometry args={[geneHexagon({ radius: SQRT3 / 3, direction: "v" })]} />
+          <meshPhongMaterial
+            color={HOVER_COLOR}
+            depthTest={false}
+          />
+        </mesh>
+      }
     </group>
   </>
 }
 
+function getNeighbors(coords: [number, number]) {
+  if (coords[1] % 2) {
+    return [
+      [coords[0], coords[1] + 1],
+      [coords[0], coords[1] - 1],
+      [coords[0] + 1, coords[1]],
+      [coords[0] - 1, coords[1]],
+      [coords[0] + 1, coords[1] + 1],
+      [coords[0] + 1, coords[1] - 1],
+    ].map((c) => ({
+      coords: c,
+      land: landList2[c[1]] && landList2[c[1]][c[0]],
+    }))
+  }
+  return [
+    [coords[0], coords[1] + 1],
+    [coords[0], coords[1] - 1],
+    [coords[0] + 1, coords[1]],
+    [coords[0] - 1, coords[1]],
+    [coords[0] - 1, coords[1] + 1],
+    [coords[0] - 1, coords[1] - 1],
+  ].map((c) => ({
+    coords: c,
+    land: landList2[c[1]] && landList2[c[1]][c[0]],
+  }))
+}
+
 export function Continent() {
-  return <>
+  const [coords, setCoords] = useState<[number, number] | null>(null)
+  const activeLand = coords ? landList2[coords[0]][coords[1]] : null
+  const neighbors = coords ? getNeighbors(coords) : null
+  const height = 1
+  const eps = 0.1
+  const gap = 0.06
+
+  return <clickedCoords.Provider value={[coords, setCoords]}>
     {/* background */}
     <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeBufferGeometry args={[50, 50]} />
@@ -303,5 +363,40 @@ export function Continent() {
         land={land}
       />)))
     }
-  </>
+    {
+      coords && activeLand && <>
+        <mesh
+          position={[
+            coords[0] + CENTER[0] - (WIDTH - 1) / 2 + (coords[1] % 2 ? 0.5 : 0),
+            height / 2 + eps,
+            (coords[1] + CENTER[1] - (HEIGHT - 1) / 2) * (Math.sqrt(3) / 2),
+          ]}
+        >
+          <cylinderGeometry
+            args={[1 / SQRT3 - gap / 2, 1 / SQRT3 - gap / 2, height, 6]}
+          />
+          <meshPhongMaterial
+            color={ACTIVE_COLOR}
+          />
+        </mesh>
+      </>
+    }
+    {
+      neighbors && neighbors.filter(({ land }) => land && land.status !== "disabled").map((neighbor) => (<mesh
+        key={neighbor.land.id}
+        position={[
+          neighbor.coords[0] + CENTER[0] - (WIDTH - 1) / 2 + (neighbor.coords[1] % 2 ? 0.5 : 0),
+          height / 2 + eps,
+          (neighbor.coords[1] + CENTER[1] - (HEIGHT - 1) / 2) * (Math.sqrt(3) / 2),
+        ]}
+      >
+        <cylinderGeometry
+          args={[1 / SQRT3 - gap / 2, 1 / SQRT3 - gap / 2, height, 6]}
+        />
+        <meshPhongMaterial
+          color={ACTIVE_COLOR}
+        />
+      </mesh>))
+    }
+  </clickedCoords.Provider>
 }

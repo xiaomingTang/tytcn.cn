@@ -72,7 +72,7 @@ function Delay<T>({ ms, children }: { ms: number; children: T }): T | null {
 function Envs() {
   return <>
     <axesHelper args={[MODEL_SIZE * 1.5]} />
-    <gridHelper args={[MODEL_SIZE * 1.5, MODEL_SIZE * 1.5, "red", "blue"]} />
+    {/* <gridHelper args={[MODEL_SIZE * 1.5, MODEL_SIZE * 1.5, "red", "blue"]} /> */}
 
     <CatchableSuspense>
       <EnvMap url="static/images/box.jpg" />
@@ -91,17 +91,15 @@ function Envs() {
       args={["white", 0.1]}
     />
 
-    {/* <directionalLight
-      args={["blue", 0.2]}
+    <directionalLight
+      args={["white", 0.2]}
       position={[10, 10, 10]}
     />
 
     <pointLight
-      args={[
-        "green",
-      ]}
+      args={["white", 0.2]}
       position={[-10, 10, -10]}
-    /> */}
+    />
   </>
 }
 
@@ -198,9 +196,7 @@ function Scene() {
       // minAzimuthAngle={Math.PI / 6}
       // maxAzimuthAngle={Math.PI / 6}
     />
-    <SimulateClick alwaysSimulate>
-      <Continent />
-    </SimulateClick>
+    <Continent />
   </>
 }
 
